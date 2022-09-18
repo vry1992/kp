@@ -56,6 +56,11 @@ export const shipTypes = {
     name: 'Морський тральщик',
     icon: 'mtsch'
   },
+  btsch: {
+    type: 'btsch',
+    name: 'Базовий тральщик',
+    icon: 'btsch'
+  },
   rvka: {
     type: 'rvka',
     name: 'Рейдовий водолазний катер',

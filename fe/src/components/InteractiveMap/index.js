@@ -25,6 +25,7 @@ const MapContent = ({ data }) => {
 
   const getShipsRoutes = useCallback(() => {
     return data.reduce((acc, curr) => {
+      if (!curr.latitude || !curr.longitude) return acc;
       const alreadyExistWithThiId = acc[curr.shipId] || [];
       const data = {
         lat: curr.latitude,
