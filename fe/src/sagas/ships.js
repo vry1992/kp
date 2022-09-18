@@ -64,6 +64,16 @@ function* saveShipData(action) {
   }
 }
 
+function groupByShipId(data) {
+  return data.reduce((acc, curr) => {
+    const alreadyExistWithThiId = acc[curr.shipId] || [];
+    return {
+      ...acc,
+      [curr.shipId]: [...alreadyExistWithThiId, curr]
+    };
+  }, {});
+}
+
 function* filterShips(action) {
   const {
     payload: { data, onSuccess, onError }
@@ -71,6 +81,8 @@ function* filterShips(action) {
   try {
     const filterResult = yield call(apiFilterShipsData, data);
     yield put(setShipsFilter(filterResult));
+    const groupedByShips = yield call(groupByShipId, filterResult);
+    console.log(Object.values(groupedByShips));
     yield put(setShipsFilterValues(data));
     if (onSuccess) {
       onSuccess();

@@ -11,5 +11,10 @@
   
   .leaflet-div-icon {
     background: transparent;
-    border: none;
+    border: none !important;
+    overflow: hidden;
+
+    img {
+      transform: translateY(-2px) scale(4);
+    }
   }
