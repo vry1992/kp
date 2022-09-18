@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install_server": "npm i --prefix ./server",
-    "install_client": "npm i --prefix ./client",
-    "server": "npm run server --prefix ./server",
-    "client": "npm run start --prefix ./client",
+    "install_server": "npm i --prefix ./be",
+    "install_client": "npm i --prefix ./fe",
+    "server": "npm run server --prefix ./be",
+    "client": "npm run start --prefix ./fe",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "install_all": "concurrently \"npm run install_client\" \"npm run install_server\""
   },
