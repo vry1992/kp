@@ -23,4 +23,5 @@ export const getSelectOptionsFromArray = (array) => {
   return array.map((item) => ({ key: item, label: item }));
 };
 
-export const parseDate = (timestamp) => new Date(timestamp).toLocaleString();
+export const parseDate = (timestamp) =>
+  new Date(timestamp + new Date().getTimezoneOffset() * 60 * 1000).toLocaleString();

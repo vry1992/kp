@@ -10,10 +10,7 @@ export const CustomPopover = ({ children, ...rest }) => (
     overlay={
       <Popover id="popover-basic">
         <Popover.Header as="h3">
-          Зафіксовано:{' '}
-          <strong>
-            {parseDate(+rest.discoverTimestamp + new Date().getTimezoneOffset() * 60 * 1000)}
-          </strong>
+          Зафіксовано: <strong>{parseDate(+rest.discoverTimestamp)}</strong>
         </Popover.Header>
         <Popover.Body>
           {rest.shipType} пр.{rest.shipProject} {rest.shipName}{' '}
