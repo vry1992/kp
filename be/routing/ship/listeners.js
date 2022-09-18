@@ -132,52 +132,6 @@ export async function filterShipData(request, response) {
     const { discoverTimestamp } = shipsDataColumns;
     const { shipId: fkShipId, frequency, personWhoAdded, shipCallsign } = shipsDataColumns;
 
-    // const selectedRows = await pool(shipsTableName)
-    // .join(shipsDataTableName, shipId.colName, fkShipId.colName)
-    //   .select(
-    //     pool.raw(`JSON_AGG(JSON_BUILD_OBJECT(
-    //       'data_id', ${shipsDataColumns.dataId.colName},
-    //       'discover_timestamp', ${shipsDataColumns.discoverTimestamp.colName},
-    //       'latitude', ${shipsDataColumns.latitude.colName},
-    //       'longitude', ${shipsDataColumns.longitude.colName},
-    //       'peleng', ${shipsDataColumns.peleng.colName},
-    //       'person_who_added', ${shipsDataColumns.personWhoAdded.colName},
-    //       'create_timestamp', ${shipsDataColumns.createTimestamp.colName},
-    //       'person_who_edited', ${shipsDataColumns.personWhoEdited.colName},
-    //       'edit_timestamp', ${shipsDataColumns.editTimestamp.colName},
-    //       'additional_information', ${shipsDataColumns.additionalInformation.colName},
-    //       'frequency', ${shipsDataColumns.frequency.colName},
-    //       'ship_id', ${shipsDataColumns.shipId.colName},
-    //       'ship_callsign', ${shipsDataColumns.shipCallsign.colName},
-    //       'companion_callsign', ${shipsDataColumns.companionCallsign.colName},
-    //       'ship_name', ${shipsColumns.shipName.colName},
-    //       'bort_number', ${shipsColumns.bortNumber.colName},
-    //       'project', ${shipsColumns.project.colName},
-    //       'ship_type', ${shipsColumns.shipType.colName},
-    //       'ship_unit', ${shipsColumns.shipUnit.colName},
-    //       'ship_city', ${shipsColumns.city.colName}
-    //     )) as ships`)
-    //   )
-    //   .where((queryBuilder) => {
-    //     if (requestBody[shipName.bodyKeyList].length) {
-    //       queryBuilder.whereIn(shipName.colName, requestBody[shipName.bodyKeyList]);
-    //     }
-    //   })
-    //   .where((queryBuilder) => {
-    //     queryBuilder.whereBetween(discoverTimestamp.colName, [requestBody.dateFrom, requestBody.dateTo]);
-    //     if (requestBody[frequency.bodyKey]) {
-    //       queryBuilder.andWhere(frequency.colName, requestBody[frequency.bodyKey]);
-    //     }
-    //     if (requestBody[personWhoAdded.bodyKeyList].length) {
-    //       queryBuilder.whereIn(personWhoAdded.colName, requestBody[personWhoAdded.bodyKeyList]);
-    //     }
-    //     if (requestBody[shipCallsign.bodyKeyList].length) {
-    //       queryBuilder.whereIn(shipCallsign.colName, requestBody[shipCallsign.bodyKeyList]);
-    //     }
-    //   })
-    //   .count('ships_data.discover_timestamp')
-    //   .orderBy('ships_data.discover_timestamp')
-
     const selectedRows = await pool(shipsTableName)
     .join(shipsDataTableName, shipId.colName, fkShipId.colName)
       .select(

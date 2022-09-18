@@ -3,7 +3,6 @@ import { Marker, MapContainer, TileLayer, useMapEvents, Popup, Polyline } from '
 import L from 'leaflet';
 import { shipTypes } from '../../constants';
 import { parseDate } from '../../helpers';
-import 'leaflet-polylinedecorator';
 import './index.scss';
 
 const defaultZoom = 6;
