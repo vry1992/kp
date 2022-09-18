@@ -1,0 +1,62 @@
+.form-control {
+  &.form-control-color {
+    width: 100%;
+  }
+}
+
+.date-time-wrapper {
+  position: relative;
+  margin-bottom: 17px;
+
+  label {
+    position: absolute;
+    left: 42px;
+    top: 16px;
+    transition: all .2s ease;
+  }
+}
+
+input[type=date],
+input[type=time] {
+  width: 100%;
+  padding: 1rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: all .2s ease;
+  padding: 24px 12px 10px 8px;
+
+  & + label {
+    top: 4px;
+    left: 12px;
+    font-size: 14px;
+    color: #5a5a5a;
+  }
+}
+
+input[type=date]:focus,
+input[type=time]:focus {
+  outline: none;
+  border-color: #86b7fe;
+  box-shadow: 0px 0px 0px 4px #c2dbfe;
+}
+
+input[type=date]::-webkit-calendar-picker-indicator,
+input[type=time]::-webkit-calendar-picker-indicator {
+  width: 100%;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.emit-date-time-value {
+  position: absolute;
+  left: 40px;
+  top: 24px;
+}
+
+.invalid-field {
+  border-color: #dc3545;
+
+  & +.invalid-feedback {
+    display: block;
+  }
+}

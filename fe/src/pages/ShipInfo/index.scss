@@ -1,0 +1,12 @@
+.ship-info {
+    .list-group {
+        &-item {
+            cursor: pointer;
+            transition: all .2s ease;
+
+            &:hover {
+                background-color: #0d6efd50;
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+.scroll-container {
+    max-height: 800px;
+    overflow-y: scroll;
+}
+
+.select-input {
+    text-overflow: ellipsis;
+}
+
+.filter-input {
+    margin-bottom: 20px;
+}

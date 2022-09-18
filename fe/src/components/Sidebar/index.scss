@@ -1,0 +1,18 @@
+.sidebar {
+    .list-group {
+        &-item {
+            &.active {
+                background-color: #0d6efd50;
+            }
+            &.disabled {
+                cursor: default;
+                a {
+                    color: #00000050;
+                }
+            }
+            div {
+                cursor: pointer;
+            }
+        }
+    }
+}

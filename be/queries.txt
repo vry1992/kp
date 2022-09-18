@@ -1,0 +1,54 @@
+SELECT json_agg((ship_name, ship_id)) as aaa, unit_name FROM units
+        INNER JOIN ships ON units.unit_id = ships.fk_unit_id
+        WHERE ship_name = 'Москва'
+        GROUP BY unit_name
+
+        SELECT ship_name, unit_name FROM units
+        LEFT JOIN ships ON UPPER(ship_name) LIKE UPPER('%вв%') OR ship_name = 'Москва'
+
+
+          CREATE TABLE public.ships_data
+(
+    "data_id" character varying(64) NOT NULL,
+    "discover_timestamp" integer NOT NULL,
+    "latitude" double precision,
+    "longitude" double precision,
+    "peleng" integer,
+    "person_who_added" character varying(64) NOT NULL,
+    "create_timestamp" integer NOT NULL,
+    "person_who_edited" character varying(64),
+    "edit_timestamp" integer,
+    "additional_information" text,
+    "fk_ship_data_id" character varying(64) REFERENCES ships(ship_id) NOT NULL,
+    CONSTRAINT "pk_ship_data_id" PRIMARY KEY (data_id)
+);
+
+   CREATE TABLE public.ships
+ (
+     "ship_id" character varying(64) NOT NULL,
+     "ship_name" character varying(128) NOT NULL,
+     "ship_bort_number" character varying(16) NOT NULL,
+     "ship_project" character varying(16) NOT NULL,
+    "ship_type" character varying(16) NOT NULL,
+     "ship_city" character varying(64) NOT NULL,
+     "fk_unit_id" character varying(64) REFERENCES units(unit_id) NOT NULL,
+     CONSTRAINT "pk_ship_id" PRIMARY KEY (ship_id)
+);
+
+ALTER TABLE IF EXISTS public.ships
+    OWNER to postgres;
+
+
+ CREATE TABLE public.ships_callsigns
+ (
+     callsign_id character varying(32),
+     callsigns_list character varying(10)[],
+     "fk_ship_id" character varying(64) REFERENCES ships(ship_id) NOT NULL,
+     CONSTRAINT "pk_callsign_id" PRIMARY KEY (callsign_id)
+);
+
+ALTER TABLE IF EXISTS public.units_callsigns
+    OWNER to postgres;
+
+INSERT into units_callsigns (callsign_id, callsigns_list, fk_ship_id)
+    values('111', '{{aaaa, ddddd}}', 'cl5zg381c0002zsty5z6adovj');
