@@ -86,6 +86,23 @@ export function NewShipForm() {
     <>
       <div>
         <form onSubmit={handleSubmit}>
+          <p>Приклади додавання підрозділів:</p>
+          <ol>
+            <li>
+              Правильний варіант:
+              <ul>
+                <li>197 Бригада десантних кораблів</li>
+              </ul>
+            </li>
+            <li>
+              Не правильні варіанти:
+              <ul>
+                <li>197-а Бригада десантних кораблів</li>
+                <li>197-я Бригада десантных кораблей</li>
+                <li>197-я БДК</li>
+              </ul>
+            </li>
+          </ol>
           <Row className="justify-content-md-center">
             <Col xs={6}>{renderForm()}</Col>
           </Row>

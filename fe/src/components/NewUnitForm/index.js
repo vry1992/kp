@@ -72,6 +72,26 @@ export function NewUnitForm() {
     <>
       <div>
         <form onSubmit={handleSubmit}>
+          <p>Приклади додавання кораблів:</p>
+          <ol>
+            <li>
+              Правильний варіант (мовою свинособак):
+              <ul>
+                <li>Вице-Адмирал Захарьин</li>
+                <li>Цезарь Кунников</li>
+              </ul>
+            </li>
+            <li>
+              Не правильні варіанти:
+              <ul>
+                <li>ВА Захарьин</li>
+                <li>В. Захарьин</li>
+                <li>Захарьин</li>
+                <li>Ц. Кунников</li>
+                <li>Кунников</li>
+              </ul>
+            </li>
+          </ol>
           <Row className="justify-content-md-center">
             <Col xs={6}>{renderForm()}</Col>
           </Row>
