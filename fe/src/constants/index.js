@@ -1,4 +1,5 @@
 export const msInMonth = 2592000000;
+export const msInDay = 1000 * 60 * 60 * 24;
 
 export const shipTypes = {
   rkr: {

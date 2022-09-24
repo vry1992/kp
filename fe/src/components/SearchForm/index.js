@@ -8,24 +8,27 @@ import { useValidation } from '../../hooks/useValidation';
 import { CustomButton } from '../CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterShips } from '../../actions/ships';
-import { getDefaultDateFrom, getDefaultDateTo, getSelectOptionsFromArray } from '../../helpers';
+import { getSelectOptionsFromArray } from '../../helpers';
 import {
   getShipNamesOptions,
   getCallSignsOptions,
-  getPersonsWhoAddedOptions
+  getPersonsWhoAddedOptions,
+  getShipsFilterValues
 } from '../../selectors';
+import { saveDateFrom, saveDateTo, saveTimeFrom, saveTimeTo } from '../../reducers/shipsFilter';
 
 const initialValues = Object.fromEntries(Object.keys(searchFormFields).map((item) => [item, '']));
 
 export function SearchForm() {
+  const storedValues = useSelector(getShipsFilterValues);
   const { validationSchema } = useValidation(searchFormFields);
   const { checkIsFormValid } = useForm(searchFormFields);
   const shipNamesOptions = useSelector(getShipNamesOptions);
   const callSignsOptions = useSelector(getCallSignsOptions);
   const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
-  const [dateFrom, setDateFrom] = useState(getDefaultDateFrom());
+  const [dateFrom, setDateFrom] = useState(storedValues.dateFrom);
   const [timeFrom, setTimeFrom] = useState(null);
-  const [dateTo, setDateTo] = useState(getDefaultDateTo());
+  const [dateTo, setDateTo] = useState(storedValues.dateTo);
   const [timeTo, setTimeTo] = useState(null);
   const dispatch = useDispatch();
 
@@ -86,24 +89,33 @@ export function SearchForm() {
 
   function onChangeTime({ target: { value, valueAsNumber, name } }) {
     if (name === searchFormFields.timeFrom.fieldName) {
-      setTimeFrom({ value, timeMS: valueAsNumber });
+      const data = { value, timeMS: valueAsNumber };
+      dispatch(saveTimeFrom(data));
+      setTimeFrom(data);
     } else if (name === searchFormFields.timeTo.fieldName) {
-      setTimeTo({ value, timeMS: valueAsNumber });
+      const data = { value, timeMS: valueAsNumber };
+      dispatch(saveTimeTo(data));
+      setTimeTo(data);
     }
     setFieldValue(name, valueAsNumber);
   }
 
   function onChangeDate({ target: { valueAsDate, valueAsNumber, name } }) {
+    console.log(name);
     if (name === searchFormFields.dateFrom.fieldName) {
-      setDateFrom({
+      const data = {
         value: valueAsDate.toLocaleDateString(),
         dateMS: valueAsNumber
-      });
+      };
+      dispatch(saveDateFrom(data));
+      setDateFrom(data);
     } else if (name === searchFormFields.dateTo.fieldName) {
-      setDateTo({
+      const data = {
         value: valueAsDate.toLocaleDateString(),
         dateMS: valueAsNumber
-      });
+      };
+      dispatch(saveDateTo);
+      setDateTo(data);
     }
     setFieldValue(name, valueAsNumber);
   }
@@ -129,6 +141,27 @@ export function SearchForm() {
   useEffect(() => {
     checkIsFormValid(errors, values);
   }, [values, errors]);
+
+  useEffect(() => {
+    Object.entries(storedValues).forEach(([name, value]) => {
+      if (name === 'timeTo') {
+        setTimeTo(value);
+        setFieldValue(name, value.timeMs);
+      }
+      if (name === 'timeFrom') {
+        setFieldValue(name, value.timeMs);
+        setTimeFrom(value);
+      }
+      if (name === 'dateTo') {
+        setFieldValue(name, value.dateMs);
+        setDateTo(value);
+      }
+      if (name === 'dateFrom') {
+        setFieldValue(name, value.dateMs);
+        setDateFrom(value);
+      }
+    });
+  }, [storedValues]);
 
   return (
     <div>
