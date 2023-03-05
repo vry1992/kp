@@ -15,8 +15,15 @@ import { CustomButton } from '../CustomButton';
 import './index.scss';
 
 const initialValues = Object.fromEntries(
-  Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, ''])
+  Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => {
+    if (item === 'date') {
+      return [item, new Date().setHours(0, 0, 0, 0)];
+    }
+    return [item, ''];
+  })
 );
+
+console.log(initialValues);
 
 export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
   const dispatch = useDispatch();
@@ -25,6 +32,10 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
+
+  useEffect(() => {
+    console.log(values);
+  });
 
   const {
     values,

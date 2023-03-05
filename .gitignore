@@ -4,6 +4,7 @@
 /node_modules
 /fe/node_modules
 /be/node_modules
+/kp_be_nest/node_modules
 /.pnp
 .pnp.js
 

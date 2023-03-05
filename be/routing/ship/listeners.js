@@ -56,12 +56,14 @@ export async function postShip(request, response) {
 
 export async function postSearchShipByKeyWord(request, response) {
   const { tableName: shipsTableName, columns: shipsColumns } = shipsTableConfig;
-  const { shipId, shipName, shipType } = shipsColumns;
+  const { shipId, shipName, shipType, bortNumber, project } = shipsColumns;
   const { body: { search } } = request;
 
   const selectedRows = await pool(shipsTableName)
     .select(shipId.colName, shipName.colName, shipType.colName)
-    .whereILike(shipName.colName, `%${search}%`);
+    .whereILike(shipName.colName, `%${search}%`)
+    .orWhereILike(bortNumber.colName, `%${search}%`)
+    .orWhereILike(project.colName, `%${search}%`)
 
   response.status(statuses.commonSuccess).json(selectedRows);
 };

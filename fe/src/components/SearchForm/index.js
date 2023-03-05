@@ -41,6 +41,7 @@ export function SearchForm() {
 
   function onSubmit() {
     const { frequency, personNameList, shipNameList, shipCallsignList } = values;
+
     const dataToSubmit = {
       ...(frequency && { frequency }),
       personNameList: personNameList ? personNameList.map(({ label }) => label) : [],
@@ -89,11 +90,11 @@ export function SearchForm() {
 
   function onChangeTime({ target: { value, valueAsNumber, name } }) {
     if (name === searchFormFields.timeFrom.fieldName) {
-      const data = { value, timeMS: valueAsNumber };
+      const data = { value, timeMS: valueAsNumber - 180 * 60 * 1000 };
       dispatch(saveTimeFrom(data));
       setTimeFrom(data);
     } else if (name === searchFormFields.timeTo.fieldName) {
-      const data = { value, timeMS: valueAsNumber };
+      const data = { value, timeMS: valueAsNumber - 180 * 60 * 1000 };
       dispatch(saveTimeTo(data));
       setTimeTo(data);
     }
@@ -114,7 +115,7 @@ export function SearchForm() {
         value: valueAsDate.toLocaleDateString(),
         dateMS: valueAsNumber
       };
-      dispatch(saveDateTo);
+      dispatch(saveDateTo(data));
       setDateTo(data);
     }
     setFieldValue(name, valueAsNumber);
