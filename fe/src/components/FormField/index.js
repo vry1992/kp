@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FloatingLabel } from 'react-bootstrap';
 import { MultySelectField } from './MultySelectField';
 import Form from 'react-bootstrap/Form';
@@ -16,8 +16,6 @@ export function FormField(fieldProps) {
     touched,
     options,
     required,
-    date,
-    time,
     ...restProps
   } = fieldProps;
 
@@ -90,24 +88,6 @@ export function FormField(fieldProps) {
     );
   };
 
-  const renderTimeField = () => {
-    return (
-      <div className="date-time-wrapper">
-        <input
-          id={fieldName}
-          type={type}
-          placeholder={placeholder}
-          value={time?.value || ''}
-          onChange={onChange}
-          name={fieldName}
-        />
-        <label htmlFor={fieldName}>{`${label} ${required ? '*' : ''}`}</label>
-        {time?.value && <span className="emit-date-time-value">{time.value}</span>}
-        {error && touched && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
-      </div>
-    );
-  };
-
   const renderDateField = () => {
     return (
       <div className="date-time-wrapper">
@@ -116,11 +96,22 @@ export function FormField(fieldProps) {
           type={type}
           placeholder={placeholder}
           onChange={onChange}
-          value={date?.value || ''}
           name={fieldName}
+          value={restProps.value}
         />
         <label htmlFor={fieldName}>{`${label} ${required ? '*' : ''}`}</label>
-        {date?.value && <span className="emit-date-time-value">{date.value}</span>}
+        {restProps.value && (
+          <span className="emit-date-time-value">
+            {new Date(restProps.value).toLocaleDateString('UK', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: false
+            })}
+          </span>
+        )}
         {error && touched && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
       </div>
     );
@@ -144,15 +135,18 @@ export function FormField(fieldProps) {
     );
   };
 
+  const renderMultySelect = useCallback(() => {
+    return <MultySelectField {...fieldProps} />;
+  }, [fieldProps]);
+
   return (
     <React.Fragment key={fieldName}>
       {(type === 'text' || type === 'number') && renderTextField()}
       {type === 'color' && renderColorField()}
       {type === 'select' && !restProps.multiple && renderMonoSelectField()}
-      {type === 'select' && restProps.multiple && <MultySelectField {...fieldProps} />}
+      {type === 'select' && restProps.multiple && renderMultySelect()}
       {type === 'checkbox' && renderCheckboxField()}
-      {type === 'time' && renderTimeField()}
-      {type === 'date' && renderDateField()}
+      {type === 'datetime-local' && renderDateField()}
       {type === 'textarea' && renderTextAreaField()}
     </React.Fragment>
   );

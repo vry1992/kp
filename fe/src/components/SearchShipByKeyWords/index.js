@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
@@ -23,19 +23,11 @@ const initialValues = Object.fromEntries(
   })
 );
 
-console.log(initialValues);
-
 export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
   const dispatch = useDispatch();
   const unitNames = useSelector(getUnitNames);
   const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
-
-  useEffect(() => {
-    console.log(values);
-  });
 
   const {
     values,
@@ -50,22 +42,21 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     resetForm,
     setValues
   } = useFormik({
-    initialValues,
+    initialValues: {
+      ...initialValues,
+      date: new Date()
+    },
     validationSchema,
     onSubmit: onSubmit
   });
 
   function onSuccessSubmit() {
-    setDate(null);
-    setTime(null);
     setValues(initialValues);
     resetForm();
     resetShipList();
   }
 
   function onFailSubmit() {
-    setDate(null);
-    setTime(null);
     setValues(initialValues);
     resetForm();
     resetShipList();
@@ -74,7 +65,6 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
   function onSubmit() {
     const {
       date,
-      time,
       peleng,
       additionalInformation,
       personName,
@@ -88,7 +78,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     } = values;
     const dataToSubmit = {
       shipId: selectedShipData.shipId,
-      discoverTimestamp: date + time,
+      discoverTimestamp: new Date(date).getTime(),
       personName,
       frequency,
       ...(latitudeDegs &&
@@ -130,17 +120,8 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     }
   }
 
-  function onChangeTime({ target: { value, valueAsNumber } }) {
-    setTime({ value, timeMS: valueAsNumber });
-    setFieldValue('time', valueAsNumber);
-  }
-
-  function onChangeDate({ target: { valueAsDate, valueAsNumber } }) {
-    setDate({
-      value: valueAsDate.toLocaleDateString(),
-      dateMS: valueAsNumber
-    });
-    setFieldValue('date', valueAsNumber);
+  function onChangeDate({ target: { value, name } }) {
+    setFieldValue(name, value);
   }
 
   function editButtonClickHandler() {
@@ -195,9 +176,6 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
         options: opts,
         onChange,
         onBlur: handleBlur,
-        date,
-        time,
-        ...(name === 'time' && { onChange: onChangeTime }),
         ...(name === 'date' && { onChange: onChangeDate }),
         ...restProps
       });

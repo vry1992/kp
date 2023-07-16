@@ -4,10 +4,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AddNewUnit } from '../pages/AddNewUnit';
 import { Map } from '../pages/Map';
-import { ShipInfo } from '../pages/ShipInfo';
 import { Search } from '../pages/Search';
 import { SuccessAddedShip } from '../pages/SuccessAddedShip';
 import { SuccessAddedUnit } from '../pages/SuccessAddedUnit';
+import { ShipInfo } from '../pages/ShipInfo';
+import { EditShipInfo } from '../pages/EditShipInfo';
 
 export const routesConfig = {
   addNewShip: {
@@ -25,6 +26,10 @@ export const routesConfig = {
   shipInfo: {
     path: '/ship-info',
     page: ShipInfo
+  },
+  editShipInfo: {
+    path: '/ship-info/edit/:id',
+    page: EditShipInfo
   },
   search: {
     path: '/search',

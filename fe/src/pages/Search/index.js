@@ -4,7 +4,7 @@ import { SearchForm } from '../../components/SearchForm';
 
 import Table from 'react-bootstrap/Table';
 import { getFilterShipData } from '../../selectors';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
 import { parseDate } from '../../helpers';
 import { CustomTooltip } from '../../components/CustomTooltip';
@@ -12,9 +12,11 @@ import { CustomButton } from '../../components/CustomButton';
 import { shipTypes } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { routesConfig } from '../../routing';
+import { deleteShipItemData } from '../../actions/ships';
 
 export function Search() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const filterTableConfig = {
     topLine: {
       shipName: {
@@ -73,11 +75,11 @@ export function Search() {
   const filterShipsData = useSelector(getFilterShipData);
 
   const onEditClick = ({ dataId }) => {
-    console.log(dataId);
+    navigate(`/ship-info/edit/${dataId}`);
   };
 
   const onDeleteClick = ({ dataId }) => {
-    console.log(dataId);
+    dispatch(deleteShipItemData(dataId));
   };
 
   const renderTableBody = useCallback(() => {

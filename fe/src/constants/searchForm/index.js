@@ -1,30 +1,16 @@
 export const searchFormFields = {
   dateFrom: {
-    type: 'date',
-    placeholder: 'Дата від якої почати пошук',
-    label: 'Дата від якої почати пошук',
+    type: 'datetime-local',
+    placeholder: 'Дата та час від якої почати пошук',
+    label: 'Дата та час від якої почати пошук',
     fieldName: 'dateFrom',
     columnWidth: 5
   },
-  timeFrom: {
-    type: 'time',
-    placeholder: 'Час від якого починати пошук',
-    label: 'Час від якого починати пошук',
-    fieldName: 'timeFrom',
-    columnWidth: 5
-  },
   dateTo: {
-    type: 'date',
-    placeholder: 'Дата до якої здійснювати пошук',
-    label: 'Дата до якої здійснювати пошук',
+    type: 'datetime-local',
+    placeholder: 'Дата та час до якої здійснювати пошук',
+    label: 'Дата та час до якої здійснювати пошук',
     fieldName: 'dateTo',
-    columnWidth: 5
-  },
-  timeTo: {
-    type: 'time',
-    placeholder: 'Час до якого здійснювати пошук',
-    label: 'Час до якого здійснювати пошук',
-    fieldName: 'timeTo',
     columnWidth: 5
   },
   shipNameList: {
@@ -65,3 +51,5 @@ export const searchFormFields = {
     options: []
   }
 };
+
+export const SEARCH_KEY = 'SEARCH_KEY';

@@ -22,7 +22,7 @@ export const MultySelectField = (fieldProps) => {
   } = fieldProps;
 
   const [optionsList, setOptionsList] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(restProps.value || []);
   const [values, setValues] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,9 +35,10 @@ export const MultySelectField = (fieldProps) => {
   const handleCheckboxClick = useCallback(
     ({ target: { checked, value } }) => {
       if (checked) {
-        setSelected([...selected, { key: value, label: value }]);
+        const item = optionsList.find(({ key }) => key === value);
+        setSelected([...selected, { key: item.key, label: item.label }]);
       } else {
-        const newSelected = selected.filter(({ label }) => label !== value);
+        const newSelected = selected.filter(({ key }) => key !== value);
         setSelected(newSelected);
       }
     },
@@ -51,6 +52,10 @@ export const MultySelectField = (fieldProps) => {
   useEffect(() => {
     setOptionsList(options);
   }, [options]);
+
+  useEffect(() => {
+    setSelected(restProps.value);
+  }, [restProps.value]);
 
   return (
     <div className="multy-select-wrapper">

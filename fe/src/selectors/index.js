@@ -13,6 +13,7 @@ export const getPersonsWhoAddedOptions = ({ initialDataReducer: { personsWhoAdde
   personsWhoAdded;
 export const getSearchShipsList = ({ shipsReducer }) => shipsReducer.searchShipsList;
 export const getFilterShipData = ({ shipsReducer }) => shipsReducer.shipsFilter;
+export const getShipEditData = ({ shipsReducer }) => shipsReducer.editShipData;
 
 export const getFlowSidebarContentType = ({ flowSidebarReducer }) => flowSidebarReducer.contentType;
 export const getShipsFilterValues = ({ shipsFilterReducer }) => shipsFilterReducer.filter;

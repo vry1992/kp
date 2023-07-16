@@ -1,18 +1,50 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Marker, MapContainer, TileLayer, useMapEvents, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { shipTypes } from '../../constants';
 import { parseDate } from '../../helpers';
+import { CustomButton } from '../CustomButton';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteShipItemData, filterShips } from '../../actions/ships';
+import { getFilterShipData } from '../../selectors';
+import { SEARCH_KEY } from '../../constants/searchForm';
 import './index.scss';
 
 const defaultZoom = 6;
 
 const MapContent = ({ data }) => {
-  const [zoom, setZoom] = useState(defaultZoom);
+  const [, setZoom] = useState(defaultZoom);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [content, setContent] = useState(data);
+  const ships = useSelector(getFilterShipData);
+
+  useEffect(() => {
+    setContent(ships);
+  }, [ships]);
+
+  useEffect(() => {
+    if (!content?.length) {
+      const filters = localStorage.getItem(SEARCH_KEY);
+      if (filters) {
+        const dataToSubmit = JSON.parse(filters);
+        dispatch(
+          filterShips({
+            data: {
+              ...dataToSubmit,
+              dateTo: new Date(dataToSubmit.dateTo).getTime(),
+              dateFrom: new Date(dataToSubmit.dateFrom).getTime(),
+              shipNameList: dataToSubmit?.shipNameList?.map(({ key }) => key) || []
+            }
+          })
+        );
+      }
+    }
+  }, [content]);
 
   const mapEvents = useMapEvents({
     zoomend: () => {
-      console.log(zoom);
       setZoom(mapEvents.getZoom());
     }
   });
@@ -24,7 +56,7 @@ const MapContent = ({ data }) => {
   });
 
   const getShipsRoutes = useCallback(() => {
-    return data.reduce((acc, curr) => {
+    return content.reduce((acc, curr) => {
       if (!curr.latitude || !curr.longitude) return acc;
       const alreadyExistWithThiId = acc[curr.shipId] || [];
       const data = {
@@ -39,7 +71,15 @@ const MapContent = ({ data }) => {
         [curr.shipId]: [...alreadyExistWithThiId, data]
       };
     }, {});
-  }, [data]);
+  }, [content]);
+
+  const onEditClick = ({ dataId }) => {
+    navigate(`/ship-info/edit/${dataId}`);
+  };
+
+  const onDeleteClick = ({ dataId }) => {
+    dispatch(deleteShipItemData(dataId));
+  };
 
   return (
     <>
@@ -48,7 +88,7 @@ const MapContent = ({ data }) => {
         url={`${process.env.PUBLIC_URL}/{z}/{x}/{y}.png`}
         // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {data.map((item) => {
+      {content.map((item) => {
         return item.latitude && item.longitude ? (
           <Marker key={item.dataId} position={[item.latitude, item.longitude]} icon={iconPerson}>
             <Popup closeButton={false}>
@@ -56,13 +96,24 @@ const MapContent = ({ data }) => {
                 {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
               </strong>
               <p>Виялений {parseDate(+item.discoverTimestamp)}</p>
+              <div>
+                <CustomButton
+                  onClick={() => onEditClick(item)}
+                  iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                  size="sm"
+                />{' '}
+                <CustomButton
+                  onClick={() => onDeleteClick(item)}
+                  iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
+                  size="sm"
+                />
+              </div>
             </Popup>
           </Marker>
         ) : null;
       })}
-      {Object.values(getShipsRoutes(data)).map((route, index) => {
+      {Object.values(getShipsRoutes(content)).map((route, index) => {
         const { color } = route[0];
-        console.log(color);
         return (
           <Polyline key={index} pathOptions={{ color }} positions={[...route]} noClip={true} />
         );

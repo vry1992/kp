@@ -63,6 +63,11 @@ export async function apiPostShipData(body) {
   return normalizePostShipDataResponse(data);
 }
 
+export async function apiEditShipData(body) {
+  const { data } = await api.put('/ship/edit-data', body);
+  return normalizePostShipDataResponse(data);
+}
+
 const normalizeFilterResponse = (data) => {
   return data.map(
     ({
@@ -112,4 +117,13 @@ const normalizeFilterResponse = (data) => {
 export async function apiFilterShipsData(body) {
   const { data } = await api.post('/ship/filter', body);
   return normalizeFilterResponse(data);
+}
+
+export async function deleteShipData(id) {
+  await api.delete(`/ship/delete/ship-data/${id}`);
+}
+
+export async function getShipInfoById(id) {
+  const { data } = await api.get(`/ship/info/${id}`);
+  return data;
 }
