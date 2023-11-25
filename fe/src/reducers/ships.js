@@ -34,11 +34,22 @@ export const shipsSlice = createSlice({
     },
     setShipEditData: (state, { payload }) => {
       state.editShipData = payload;
+    },
+    setShipUpdateData: (state, { payload }) => {
+      const shipIndex = state.shipsFilter.findIndex(({ dataId }) => payload.dataId === dataId);
+      if (shipIndex >= 0) {
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value) {
+            state.shipsFilter[shipIndex][key] = value;
+          }
+        });
+      }
     }
   }
 });
 
-export const { setSearchShipsList, setShipsFilter, setShipEditData } = shipsSlice.actions;
+export const { setSearchShipsList, setShipsFilter, setShipEditData, setShipUpdateData } =
+  shipsSlice.actions;
 const { reducer: shipsReducer } = shipsSlice;
 
 export { shipsReducer };

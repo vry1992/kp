@@ -9,7 +9,12 @@ import {
   POST_SHIP_DATA
 } from '../actions/ships';
 import { setInitData } from '../reducers/initialData';
-import { setSearchShipsList, setShipEditData, setShipsFilter } from '../reducers/ships';
+import {
+  setSearchShipsList,
+  setShipEditData,
+  setShipsFilter,
+  setShipUpdateData
+} from '../reducers/ships';
 import {
   apiEditShipData,
   apiFilterShipsData,
@@ -122,7 +127,8 @@ function* editShipData(action) {
   } = action;
   try {
     const result = yield call(apiEditShipData, data);
-    yield put(setInitData(result));
+    console.log(result);
+    yield put(setShipUpdateData(result));
     if (onSuccess) {
       onSuccess();
     }

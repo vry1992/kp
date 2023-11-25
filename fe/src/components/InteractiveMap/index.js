@@ -6,7 +6,7 @@ import { parseDate } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteShipItemData, filterShips } from '../../actions/ships';
+import { deleteShipItemData, editShipData, filterShips } from '../../actions/ships';
 import { getFilterShipData } from '../../selectors';
 import { SEARCH_KEY } from '../../constants/searchForm';
 import './index.scss';
@@ -56,21 +56,23 @@ const MapContent = ({ data }) => {
   });
 
   const getShipsRoutes = useCallback(() => {
-    return content.reduce((acc, curr) => {
-      if (!curr.latitude || !curr.longitude) return acc;
-      const alreadyExistWithThiId = acc[curr.shipId] || [];
-      const data = {
-        lat: curr.latitude,
-        lng: curr.longitude,
-        color: alreadyExistWithThiId.length
-          ? curr.shipId[0].color
-          : `#${Math.floor(Math.random() * 16777215).toString(16)}`
-      };
-      return {
-        ...acc,
-        [curr.shipId]: [...alreadyExistWithThiId, data]
-      };
-    }, {});
+    // return content.reduce((acc, curr) => {
+    //   if (!curr.latitude || !curr.longitude) return acc;
+    //   const alreadyExistWithThiId = acc[curr.shipId] || [];
+    //   const data = {
+    //     lat: curr.latitude,
+    //     lng: curr.longitude,
+    //     color: alreadyExistWithThiId.length
+    //       ? curr.shipId[0].color
+    //       : `#${Math.floor(Math.random() * 16777215).toString(16)}`
+    //   };
+    //   return {
+    //     ...acc,
+    //     [curr.shipId]: [...alreadyExistWithThiId, data]
+    //   };
+    // }, {});
+
+    return {};
   }, [content]);
 
   const onEditClick = ({ dataId }) => {
@@ -81,6 +83,27 @@ const MapContent = ({ data }) => {
     dispatch(deleteShipItemData(dataId));
   };
 
+  const submitUpdatedPosition = ({ lat, lng }, dataId) => {
+    dispatch(
+      editShipData({
+        data: {
+          latitude: lat,
+          longitude: lng,
+          id: dataId
+        }
+      })
+    );
+  };
+
+  const eventHandlers = useCallback(
+    (item) => ({
+      dragend(e) {
+        submitUpdatedPosition(e.target.getLatLng(), item.dataId);
+      }
+    }),
+    [content]
+  );
+
   return (
     <>
       <TileLayer
@@ -90,7 +113,15 @@ const MapContent = ({ data }) => {
       />
       {content.map((item) => {
         return item.latitude && item.longitude ? (
-          <Marker key={item.dataId} position={[item.latitude, item.longitude]} icon={iconPerson}>
+          <Marker
+            key={item.dataId}
+            position={[item.latitude, item.longitude]}
+            icon={iconPerson}
+            eventHandlers={eventHandlers(item)}
+            draggable={true}
+            onDragEnd={() => {
+              console.log('ok');
+            }}>
             <Popup closeButton={false}>
               <strong>
                 {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
