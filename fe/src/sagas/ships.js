@@ -127,7 +127,6 @@ function* editShipData(action) {
   } = action;
   try {
     const result = yield call(apiEditShipData, data);
-    console.log(result);
     yield put(setShipUpdateData(result));
     if (onSuccess) {
       onSuccess();

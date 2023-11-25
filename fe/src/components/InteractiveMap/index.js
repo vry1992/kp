@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Marker, MapContainer, TileLayer, useMapEvents, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { shipTypes } from '../../constants';
@@ -9,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteShipItemData, editShipData, filterShips } from '../../actions/ships';
 import { getFilterShipData } from '../../selectors';
 import { SEARCH_KEY } from '../../constants/searchForm';
+import { UpdateOrCreateNewPopup } from '../UpdateOrCreatePopup';
 import './index.scss';
 
 const defaultZoom = 6;
@@ -19,6 +21,8 @@ const MapContent = ({ data }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState(data);
   const ships = useSelector(getFilterShipData);
+  const draggedItem = useRef(null);
+  const [updateOrCreatePopup, setUpdateOrCreatePopup] = useState(false);
 
   useEffect(() => {
     setContent(ships);
@@ -75,6 +79,10 @@ const MapContent = ({ data }) => {
     return {};
   }, [content]);
 
+  const onCancelUpdateOrCreatePopup = () => {
+    setUpdateOrCreatePopup(false);
+  };
+
   const onEditClick = ({ dataId }) => {
     navigate(`/ship-info/edit/${dataId}`);
   };
@@ -83,22 +91,31 @@ const MapContent = ({ data }) => {
     dispatch(deleteShipItemData(dataId));
   };
 
-  const submitUpdatedPosition = ({ lat, lng }, dataId) => {
-    dispatch(
-      editShipData({
-        data: {
-          latitude: lat,
-          longitude: lng,
-          id: dataId
-        }
-      })
-    );
+  const submitUpdatedPosition = (data) => {
+    dispatch(editShipData({ data }));
+  };
+
+  const onMoveCurrentPress = () => {
+    if (draggedItem.current) {
+      const { latitude, longitude, dataId } = draggedItem.current;
+      submitUpdatedPosition({
+        latitude,
+        longitude,
+        id: dataId
+      });
+      setUpdateOrCreatePopup(false);
+    }
   };
 
   const eventHandlers = useCallback(
     (item) => ({
       dragend(e) {
-        submitUpdatedPosition(e.target.getLatLng(), item.dataId);
+        draggedItem.current = {
+          ...item,
+          latitude: e.target.getLatLng().lat,
+          longitude: e.target.getLatLng().lng
+        };
+        setUpdateOrCreatePopup(true);
       }
     }),
     [content]
@@ -106,6 +123,11 @@ const MapContent = ({ data }) => {
 
   return (
     <>
+      <UpdateOrCreateNewPopup
+        show={updateOrCreatePopup}
+        onMoveCurrentPress={onMoveCurrentPress}
+        onCancel={onCancelUpdateOrCreatePopup}
+      />
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url={`${process.env.PUBLIC_URL}/{z}/{x}/{y}.png`}
@@ -119,27 +141,27 @@ const MapContent = ({ data }) => {
             icon={iconPerson}
             eventHandlers={eventHandlers(item)}
             draggable={true}
-            onDragEnd={() => {
-              console.log('ok');
-            }}>
-            <Popup closeButton={false}>
-              <strong>
-                {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
-              </strong>
-              <p>Виялений {parseDate(+item.discoverTimestamp)}</p>
-              <div>
-                <CustomButton
-                  onClick={() => onEditClick(item)}
-                  iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
-                  size="sm"
-                />{' '}
-                <CustomButton
-                  onClick={() => onDeleteClick(item)}
-                  iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
-                  size="sm"
-                />
-              </div>
-            </Popup>
+            title={'okok'}>
+            <>
+              <Popup closeButton={false}>
+                <strong>
+                  {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
+                </strong>
+                <p>Виялений {parseDate(+item.discoverTimestamp)}</p>
+                <div>
+                  <CustomButton
+                    onClick={() => onEditClick(item)}
+                    iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                    size="sm"
+                  />{' '}
+                  <CustomButton
+                    onClick={() => onDeleteClick(item)}
+                    iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
+                    size="sm"
+                  />
+                </div>
+              </Popup>
+            </>
           </Marker>
         ) : null;
       })}
