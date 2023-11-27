@@ -25,7 +25,8 @@ const normalizePostShipDataResponse = ({
   ships: shipNames,
   latitude,
   longitude,
-  id: dataId
+  id: dataId,
+  personEditName
 }) => {
   return {
     personsWhoAdded,
@@ -33,7 +34,8 @@ const normalizePostShipDataResponse = ({
     shipNames,
     latitude,
     longitude,
-    dataId
+    dataId,
+    personEditName
   };
 };
 
@@ -71,7 +73,6 @@ export async function apiPostShipData(body) {
 
 export async function apiEditShipData(body) {
   const { data } = await api.put('/ship/edit-data', body);
-  console.log('D =>', data);
   return normalizePostShipDataResponse(data);
 }
 

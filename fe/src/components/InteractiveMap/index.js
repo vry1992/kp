@@ -31,6 +31,7 @@ const MapContent = ({ data }) => {
   const ships = useSelector(getFilterShipData);
   const draggedItem = useRef(null);
   const [updateOrCreatePopup, setUpdateOrCreatePopup] = useState(false);
+  const [routes, setRoutes] = useState({});
 
   useEffect(() => {
     setContent(ships);
@@ -63,33 +64,34 @@ const MapContent = ({ data }) => {
 
   const iconPerson = (markerData) =>
     new L.DivIcon({
-      html: `<div style="position: relative"><p style="position: absolute;z-index:1;text-align:center;width:100%;transform: translateY(45%)">${
-        shipTypes[markerData.shipType].type
+      html: `<div style="position: relative"><p style="position: absolute;z-index:1;text-align:center;width:100%;transform: translateY(45%);color:#ffffff">${
+        shipTypes[markerData.shipType].short
       }</p><img src="${process.env.PUBLIC_URL}/images/signs/emptyShip.svg"></div>`,
       // html: ShipIcon(),
       iconSize: [35, 35],
       className: 'leaflet-div-icon'
     });
 
-  const getShipsRoutes = useCallback(() => {
-    // return content.reduce((acc, curr) => {
-    //   if (!curr.latitude || !curr.longitude) return acc;
-    //   const alreadyExistWithThiId = acc[curr.shipId] || [];
-    //   const data = {
-    //     lat: curr.latitude,
-    //     lng: curr.longitude,
-    //     color: alreadyExistWithThiId.length
-    //       ? curr.shipId[0].color
-    //       : `#${Math.floor(Math.random() * 16777215).toString(16)}`
-    //   };
-    //   return {
-    //     ...acc,
-    //     [curr.shipId]: [...alreadyExistWithThiId, data]
-    //   };
-    // }, {});
-
-    return {};
-  }, [content]);
+  const getShipsRoutes = useCallback(
+    (data) => {
+      return data.reduce((acc, curr) => {
+        if (!curr.latitude || !curr.longitude) return acc;
+        const alreadyExistWithThiId = acc[curr.shipId] || [];
+        const data = {
+          lat: curr.latitude,
+          lng: curr.longitude,
+          color: alreadyExistWithThiId.length
+            ? curr.shipId[0].color
+            : `#${Math.floor(Math.random() * 16777215).toString(16)}`
+        };
+        return {
+          ...acc,
+          [curr.shipId]: [...alreadyExistWithThiId, data]
+        };
+      }, {});
+    },
+    [content]
+  );
 
   const onCancelUpdateOrCreatePopup = () => {
     setUpdateOrCreatePopup(false);
@@ -109,7 +111,7 @@ const MapContent = ({ data }) => {
 
   const onMoveCurrentPress = () => {
     if (draggedItem.current) {
-      const { latitude, longitude, dataId } = draggedItem.current;
+      const { latitude, longitude, dataId, shipId } = draggedItem.current;
       submitUpdatedPosition({
         latitude,
         longitude,
@@ -145,6 +147,22 @@ const MapContent = ({ data }) => {
     });
   };
 
+  const onShowRouteClick = useCallback(
+    (marker) => {
+      const { shipId } = marker;
+      if (routes[shipId]) {
+        const newRoutes = { ...routes };
+        delete newRoutes[shipId];
+        setRoutes(newRoutes);
+        return;
+      }
+      const currentShip = content.filter((contentItem) => contentItem.shipId === shipId);
+      const shipRoutes = getShipsRoutes(currentShip);
+      setRoutes({ ...routes, ...shipRoutes });
+    },
+    [routes, getShipsRoutes]
+  );
+
   return (
     <>
       <UpdateOrCreateNewPopup
@@ -175,7 +193,7 @@ const MapContent = ({ data }) => {
                   {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
                 </strong>
                 <p>Виялений {parseDate(+item.discoverTimestamp)}</p>
-                <div>
+                <div className="d-flex justify-content-around">
                   <CustomButton
                     onClick={() => onEditClick(item)}
                     iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
@@ -186,13 +204,18 @@ const MapContent = ({ data }) => {
                     iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
                     size="sm"
                   />
+                  <CustomButton
+                    onClick={() => onShowRouteClick(item)}
+                    iconPath={`${process.env.PUBLIC_URL}/images/icons/route.png`}
+                    size="sm"
+                  />
                 </div>
               </Popup>
             </>
           </Marker>
         ) : null;
       })}
-      {Object.values(getShipsRoutes(content)).map((route, index) => {
+      {Object.values(routes).map((route, index) => {
         const { color } = route[0];
         return (
           <Polyline key={index} pathOptions={{ color }} positions={[...route]} noClip={true} />
