@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/vry1992/kp/static/css/main.dd9d8132.css",
+    "main.js": "/vry1992/kp/static/js/main.4250a054.js",
+    "index.html": "/vry1992/kp/index.html",
+    "main.dd9d8132.css.map": "/vry1992/kp/static/css/main.dd9d8132.css.map",
+    "main.4250a054.js.map": "/vry1992/kp/static/js/main.4250a054.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dd9d8132.css",
+    "static/js/main.4250a054.js"
+  ]
+}
