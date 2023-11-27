@@ -31,12 +31,6 @@ export function Search() {
       shipCity: {
         text: 'Місто дислокації'
       },
-      shipCallsign: {
-        text: 'Позивний'
-      },
-      companionCallsign: {
-        text: "Позивний з ким зв'язувався"
-      },
       shipBortNumber: {
         text: 'Бортовий номер'
       },

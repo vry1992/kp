@@ -1,9 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Marker, MapContainer, TileLayer, useMapEvents, Popup, Polyline } from 'react-leaflet';
+import {
+  Marker,
+  MapContainer,
+  TileLayer,
+  useMapEvents,
+  Popup,
+  Polyline,
+  Tooltip
+} from 'react-leaflet';
 import L from 'leaflet';
 import { shipTypes } from '../../constants';
-import { parseDate } from '../../helpers';
+import { coordinatesConverterBack, parseDate } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,11 +61,15 @@ const MapContent = ({ data }) => {
     }
   });
 
-  const iconPerson = new L.DivIcon({
-    html: `<img src="${process.env.PUBLIC_URL}/images/signs/aaa.svg">`,
-    iconSize: [30, 30],
-    className: 'leaflet-div-icon'
-  });
+  const iconPerson = (markerData) =>
+    new L.DivIcon({
+      html: `<div style="position: relative"><p style="position: absolute;z-index:1;text-align:center;width:100%;transform: translateY(45%)">${
+        shipTypes[markerData.shipType].type
+      }</p><img src="${process.env.PUBLIC_URL}/images/signs/emptyShip.svg"></div>`,
+      // html: ShipIcon(),
+      iconSize: [35, 35],
+      className: 'leaflet-div-icon'
+    });
 
   const getShipsRoutes = useCallback(() => {
     // return content.reduce((acc, curr) => {
@@ -121,12 +133,25 @@ const MapContent = ({ data }) => {
     [content]
   );
 
+  const onCreateNew = () => {
+    navigate(`/ship-info`, {
+      state: {
+        ...draggedItem.current,
+        latitudeMinutes: coordinatesConverterBack(draggedItem.current.latitude).min,
+        latitudeDegs: coordinatesConverterBack(draggedItem.current.latitude).deg,
+        longitudeDegs: coordinatesConverterBack(draggedItem.current.longitude).deg,
+        longitudeMinutes: coordinatesConverterBack(draggedItem.current.longitude).min
+      }
+    });
+  };
+
   return (
     <>
       <UpdateOrCreateNewPopup
         show={updateOrCreatePopup}
         onMoveCurrentPress={onMoveCurrentPress}
         onCancel={onCancelUpdateOrCreatePopup}
+        onCreateNew={onCreateNew}
       />
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -138,11 +163,13 @@ const MapContent = ({ data }) => {
           <Marker
             key={item.dataId}
             position={[item.latitude, item.longitude]}
-            icon={iconPerson}
+            icon={iconPerson(item)}
             eventHandlers={eventHandlers(item)}
-            draggable={true}
-            title={'okok'}>
+            draggable={true}>
             <>
+              <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+                {item.shipName}
+              </Tooltip>
               <Popup closeButton={false}>
                 <strong>
                   {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;

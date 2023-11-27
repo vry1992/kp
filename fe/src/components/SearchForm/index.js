@@ -40,27 +40,19 @@ export function SearchForm() {
   const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
   const dispatch = useDispatch();
 
-  const {
-    values,
-    handleSubmit,
-    handleBlur,
-    handleChange,
-    touched,
-    errors,
-    setFieldValue,
-    setValues
-  } = useFormik({
-    initialValues: {
-      dateTo: new Date(storedFilters.dateTo) || defaultDateTo,
-      dateFrom: new Date(storedFilters.dateFrom) || defaultDateFrom,
-      shipNameList: storedFilters.shipNameList || [],
-      frequency: storedFilters.frequency || '',
-      shipCallsignList: storedFilters.shipCallsignList || [],
-      personNameList: storedFilters.personNameList || []
-    },
-    validationSchema,
-    onSubmit
-  });
+  const { values, handleSubmit, handleBlur, handleChange, touched, errors, setFieldValue } =
+    useFormik({
+      initialValues: {
+        dateTo: new Date(storedFilters.dateTo) || defaultDateTo,
+        dateFrom: new Date(storedFilters.dateFrom) || defaultDateFrom,
+        shipNameList: storedFilters.shipNameList || [],
+        frequency: storedFilters.frequency || '',
+        shipCallsignList: storedFilters.shipCallsignList || [],
+        personNameList: storedFilters.personNameList || []
+      },
+      validationSchema,
+      onSubmit
+    });
 
   function onSubmit(values) {
     const { frequency, personNameList, shipNameList, shipCallsignList, dateFrom, dateTo } = values;
@@ -72,6 +64,7 @@ export function SearchForm() {
       dateTo: new Date(dateTo).getTime(),
       dateFrom: new Date(dateFrom).getTime()
     };
+    localStorage.setItem(SEARCH_KEY, JSON.stringify({ ...values }));
     dispatch(
       filterShips({
         data: dataToSubmit,
@@ -133,39 +126,18 @@ export function SearchForm() {
     });
   }, [values, getMultyselectOptions, renderField]);
 
-  const clearFilters = () => {
-    localStorage.removeItem(SEARCH_KEY);
-    setValues({
-      shipNameList: [],
-      frequency: '',
-      shipCallsignList: [],
-      personNameList: [],
-      dateFrom: defaultDateFrom,
-      dateTo: defaultDateTo
-    });
-  };
-
   useEffect(() => {
     checkIsFormValid(errors, values);
   }, [values, errors]);
 
-  useEffect(() => {
-    localStorage.setItem(SEARCH_KEY, JSON.stringify({ ...values }));
-  }, [values]);
-
   return (
-    <div>
-      <Col xs={10}>
-        <CustomButton text="Очистити фільтр" type="button" onClick={clearFilters} />
-      </Col>
-      <form onSubmit={handleSubmit}>
-        <Row className="justify-content-md-center">{renderSearchForm()}</Row>
-        <Row className="justify-content-md-center">
-          <Col xs={10}>
-            <CustomButton text="Пошук" type="submit" />
-          </Col>
-        </Row>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <Row className="justify-content-md-center">{renderSearchForm()}</Row>
+      <Row className="justify-content-md-center">
+        <Col xs={10}>
+          <CustomButton text="Пошук" type="submit" />
+        </Col>
+      </Row>
+    </form>
   );
 }

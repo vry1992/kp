@@ -88,7 +88,7 @@ export function FormField(fieldProps) {
     );
   };
 
-  const renderDateField = () => {
+  const renderDateTimeField = () => {
     return (
       <div className="date-time-wrapper">
         <input
@@ -109,6 +109,32 @@ export function FormField(fieldProps) {
               hour: 'numeric',
               minute: 'numeric',
               hour12: false
+            })}
+          </span>
+        )}
+        {error && touched && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
+      </div>
+    );
+  };
+
+  const renderDateField = () => {
+    return (
+      <div className="date-time-wrapper">
+        <input
+          id={fieldName}
+          type={type}
+          placeholder={placeholder}
+          onChange={onChange}
+          name={fieldName}
+          value={restProps.value}
+        />
+        <label htmlFor={fieldName}>{`${label} ${required ? '*' : ''}`}</label>
+        {restProps.value && (
+          <span className="emit-date-time-value">
+            {new Date(restProps.value).toLocaleDateString('UK', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric'
             })}
           </span>
         )}
@@ -146,7 +172,8 @@ export function FormField(fieldProps) {
       {type === 'select' && !restProps.multiple && renderMonoSelectField()}
       {type === 'select' && restProps.multiple && renderMultySelect()}
       {type === 'checkbox' && renderCheckboxField()}
-      {type === 'datetime-local' && renderDateField()}
+      {type === 'datetime-local' && renderDateTimeField()}
+      {type === 'date' && renderDateField()}
       {type === 'textarea' && renderTextAreaField()}
     </React.Fragment>
   );

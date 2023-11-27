@@ -14,5 +14,13 @@ export const sidebarLinks = {
   search: {
     type: 'navigation',
     label: 'Пошук'
+  },
+  dutyInfo: {
+    type: 'navigation',
+    label: 'Інформація про чергового'
+  },
+  map: {
+    type: 'navigation',
+    label: 'Карта'
   }
 };

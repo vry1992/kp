@@ -39,6 +39,9 @@ export function useValidation(fieldsToValdate = {}) {
     ...(fieldsToValdate.shipType && {
       shipType: getShipTypeSchema(fieldsToValdate.shipType.required)
     }),
+    ...(fieldsToValdate.dutyManRank && {
+      dutyManRank: getShipTypeSchema(fieldsToValdate.dutyManRank.required)
+    }),
     ...(fieldsToValdate.peleng && { peleng: getPelengSchema(fieldsToValdate.peleng.required) }),
     ...(fieldsToValdate.search && { search: getSearchSchema(fieldsToValdate.search.required) }),
     ...(fieldsToValdate.time && { time: getTimeSchema(fieldsToValdate.time.required) }),
@@ -66,6 +69,9 @@ export function useValidation(fieldsToValdate = {}) {
     }),
     ...(fieldsToValdate.personName && {
       personName: getPersonNameAndInitialsSchema(fieldsToValdate.personName.required)
+    }),
+    ...(fieldsToValdate.dutyManFullName && {
+      dutyManFullName: getPersonNameAndInitialsSchema(fieldsToValdate.dutyManFullName.required)
     }),
     ...(fieldsToValdate.additionalInformation && {
       additionalInformation: getTextAreaSchema(fieldsToValdate.additionalInformation.required)

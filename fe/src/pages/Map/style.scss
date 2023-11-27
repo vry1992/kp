@@ -1,12 +1,26 @@
 .map {
   position: relative;
 
-  &_title {
+  &_title,
+  &_footer {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 700;
     width: 100%;
     position: absolute;
     text-align: center;
     z-index: 99999;
+  }
+
+  &_footer {
+    padding-left: 100px;
+    position: fixed;
+    bottom: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .signiture {
+      width: 100%
+    }
   }
 }

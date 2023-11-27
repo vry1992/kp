@@ -13,21 +13,31 @@ import { errorSearchShip } from '../../constants/validation';
 import { coordinatesConverter } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 import './index.scss';
+import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
 
-const initialValues = Object.fromEntries(
-  Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => {
-    if (item === 'date') {
-      return [item, new Date().setHours(0, 0, 0, 0)];
-    }
-    return [item, ''];
-  })
-);
+const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
+const dutyData = storageData ? JSON.parse(storageData) : null;
 
 export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
   const dispatch = useDispatch();
   const unitNames = useSelector(getUnitNames);
   const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
+
+  const initialValues = {
+    ...Object.fromEntries(
+      Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => {
+        const value = selectedShipData?.[item] || '';
+        if (item === 'date') {
+          return [item, new Date().setHours(0, 0, 0, 0)];
+        }
+        return [item, value];
+      })
+    ),
+    personName: dutyData?.dutyManFullName || '',
+    peleng: '',
+    date: new Date()
+  };
 
   const {
     values,
@@ -42,10 +52,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     resetForm,
     setValues
   } = useFormik({
-    initialValues: {
-      ...initialValues,
-      date: new Date()
-    },
+    initialValues,
     validationSchema,
     onSubmit: onSubmit
   });

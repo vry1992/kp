@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { SearchShipByKeyWords } from '../../components/SearchShipByKeyWords';
 import { Headline } from '../../components/Headline';
 import { Col, ListGroup, Row } from 'react-bootstrap';
@@ -12,8 +12,10 @@ import './index.scss';
 
 export function ShipInfo() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const selectedShip = location.state ? location.state : null;
   const searchShipsList = useSelector(getSearchShipsList);
-  const [selectedShipData, setSelectedShipData] = useState(null);
+  const [selectedShipData, setSelectedShipData] = useState(selectedShip);
   const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
   const unitNames = useSelector(getUnitNames);
   const navigate = useNavigate();
