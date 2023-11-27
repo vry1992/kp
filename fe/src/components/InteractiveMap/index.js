@@ -20,6 +20,7 @@ import { getFilterShipData } from '../../selectors';
 import { SEARCH_KEY } from '../../constants/searchForm';
 import { UpdateOrCreateNewPopup } from '../UpdateOrCreatePopup';
 import './index.scss';
+import { ClickOnMapPopup } from '../ClickOnMapPopup';
 
 const defaultZoom = 6;
 
@@ -31,7 +32,16 @@ const MapContent = ({ data }) => {
   const ships = useSelector(getFilterShipData);
   const draggedItem = useRef(null);
   const [updateOrCreatePopup, setUpdateOrCreatePopup] = useState(false);
+  const [clickOnMapPopup, setClickOnMapPopup] = useState(false);
   const [routes, setRoutes] = useState({});
+  const [clickCoordinates, setClickCoordinates] = useState(null);
+
+  const map = useMapEvents({
+    dblclick(e) {
+      setClickOnMapPopup(true);
+      setClickCoordinates(e.latlng);
+    }
+  });
 
   useEffect(() => {
     setContent(ships);
@@ -121,7 +131,7 @@ const MapContent = ({ data }) => {
     }
   };
 
-  const eventHandlers = useCallback(
+  const markerEventHandlers = useCallback(
     (item) => ({
       dragend(e) {
         draggedItem.current = {
@@ -163,6 +173,18 @@ const MapContent = ({ data }) => {
     [routes, getShipsRoutes]
   );
 
+  const onConfirmAddNewOnClick = () => {
+    navigate(`/ship-info`, {
+      state: {
+        latitudeMinutes: coordinatesConverterBack(clickCoordinates.lat).min,
+        latitudeDegs: coordinatesConverterBack(clickCoordinates.lat).deg,
+        longitudeDegs: coordinatesConverterBack(clickCoordinates.lng).deg,
+        longitudeMinutes: coordinatesConverterBack(clickCoordinates.lng).min
+      }
+    });
+    setClickOnMapPopup(false);
+  };
+
   return (
     <>
       <UpdateOrCreateNewPopup
@@ -170,6 +192,11 @@ const MapContent = ({ data }) => {
         onMoveCurrentPress={onMoveCurrentPress}
         onCancel={onCancelUpdateOrCreatePopup}
         onCreateNew={onCreateNew}
+      />
+      <ClickOnMapPopup
+        show={clickOnMapPopup}
+        onConfirm={onConfirmAddNewOnClick}
+        onCancel={() => setClickOnMapPopup(false)}
       />
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -182,7 +209,7 @@ const MapContent = ({ data }) => {
             key={item.dataId}
             position={[item.latitude, item.longitude]}
             icon={iconPerson(item)}
-            eventHandlers={eventHandlers(item)}
+            eventHandlers={markerEventHandlers(item)}
             draggable={true}>
             <>
               <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
@@ -227,7 +254,7 @@ const MapContent = ({ data }) => {
 
 export const InteractiveMap = ({ data }) => {
   return (
-    <MapContainer center={[44.2976268, 31.7484256]} zoom={defaultZoom}>
+    <MapContainer center={[44.2976268, 31.7484256]} zoom={defaultZoom} cli>
       <MapContent data={data} />
     </MapContainer>
   );

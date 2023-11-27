@@ -67,7 +67,7 @@ export function ShipInfo() {
     <div className="ship-info">
       <Headline text="Додати інформацію про виявлений корабель" />
       <SearchShipByKeyWords selectedShipData={selectedShipData} resetShipList={resetShipList} />
-      {!selectedShipData && renderShipsList()}
+      {!selectedShipData?.shipId && renderShipsList()}
       {iseRefuseModalOpen && (
         <RefuseAddNewShipModal
           show={iseRefuseModalOpen}

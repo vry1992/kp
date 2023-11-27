@@ -84,7 +84,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
       shipCallsign
     } = values;
     const dataToSubmit = {
-      shipId: selectedShipData.shipId,
+      shipId: selectedShipData?.shipId,
       discoverTimestamp: new Date(date).getTime(),
       personName,
       frequency,
@@ -122,7 +122,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     if (name === 'search') {
       setFieldTouched('search', true);
     }
-    if (!selectedShipData && value.length && value.length % 3 === 0) {
+    if (!selectedShipData?.shipId && value.length && value.length % 2 === 0) {
       onSubmitSearch({ data: { search: value }, onError: onFailSearch });
     }
   }
@@ -168,7 +168,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
       return renderField({
         name,
         options: opts,
-        disabled: !!selectedShipData,
+        disabled: !!selectedShipData?.shipId,
         onChange,
         ...restProps
       });
@@ -189,12 +189,16 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     });
   };
 
+  useEffect(() => {
+    console.log(selectedShipData);
+  }, [selectedShipData]);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <Row className="justify-content-md-center">
           {renderSearchShipForm()}
-          {selectedShipData && (
+          {selectedShipData?.shipId && (
             <Col xs="10">
               <div className="edit-button">
                 <CustomButton
@@ -206,7 +210,7 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
             </Col>
           )}
         </Row>
-        {selectedShipData && (
+        {selectedShipData?.shipId && (
           <Row className="justify-content-md-center">
             {renderShipInfoForm()}
             <Col xs={10}>
