@@ -9,7 +9,7 @@ export function CustomButton({
   onClick,
   iconPath,
   type = 'button',
-  size = 'lg'
+  size = 'sm'
 }) {
   return (
     <Button

@@ -7,7 +7,8 @@ export const callSignRegexp = /[A-Za-zА-Яа-я0-9-]+/;
 export const dateRegexp = /\d{2}\.\d{2}\.\d{4}/;
 export const timeRegexp = /\d{2}:\d{2}/;
 export const frequencyRegexp = /^(\d{4}){1}$|(\d{2,3}\.\d{1,3}){1}$/;
-export const personNameAndInitialsRegexp = /^([А-Яа-яІіЇїЯя]+)\s([А-Я]\.[А-Я]\.)$/;
+export const personNameAndInitialsRegexp =
+  /^([А-Яа-яІіЇїЯяЄє]+)\s([А-ЯІіЇїЯяЄє]\.[А-ЯІіЇїЯяЄє]\.)$/;
 export const textAreaRegexp = /^[^\\<>{}\][%"$@#|&]*$/;
 export const requiredFieldMessage = "Обов'язкове поле";
 export const errorFieldMessage = 'Не коректне значення';

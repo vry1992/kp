@@ -6,12 +6,14 @@ import { useForm } from '../../hooks/useForm';
 import { useValidation } from '../../hooks/useValidation';
 import { FormField } from '../../components/FormField';
 import { CustomButton } from '../../components/CustomButton';
+import { useNavigate } from 'react-router-dom';
 
 const initialValues = Object.fromEntries(Object.keys(dutyInfoFormConfig).map((item) => [item, '']));
 
 export const DUTY_INFO_STORAGE_KEY = 'DUTY_INFO';
 
 export function DutyInfo() {
+  const navigate = useNavigate();
   const { checkIsFormValid, isFormValid } = useForm(dutyInfoFormConfig);
   const { validationSchema } = useValidation(dutyInfoFormConfig);
   const { values, handleChange, handleSubmit, errors, touched, handleBlur, setFieldValue } =
@@ -20,16 +22,15 @@ export function DutyInfo() {
       validationSchema,
       onSubmit: (data) => {
         localStorage.setItem(DUTY_INFO_STORAGE_KEY, JSON.stringify(data));
+        navigate('/map');
       }
     });
 
   useEffect(() => {
-    console.log(values);
     checkIsFormValid(errors, values);
   }, [values, errors]);
 
   function onChangeDate({ target: { name, value } }) {
-    console.log(name, value);
     setFieldValue(name, value);
   }
 
