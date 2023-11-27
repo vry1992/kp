@@ -25,6 +25,7 @@ import {
   getShipInfoById
 } from '../services/api';
 import { SEARCH_KEY } from '../constants/searchForm';
+import { DUTY_INFO_STORAGE_KEY } from '../pages/DutyInfo';
 
 function* postShip(action) {
   const { payload, onSuccess, onError } = action;
@@ -126,6 +127,11 @@ function* editShipData(action) {
     payload: { data, onSuccess, onError }
   } = action;
   try {
+    const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
+    const dutyData = storageData ? JSON.parse(storageData) : null;
+    if (!data.personEditName) {
+      data.personEditName = dutyData?.dutyManFullName;
+    }
     const result = yield call(apiEditShipData, data);
     yield put(setShipUpdateData(result));
     if (onSuccess) {
