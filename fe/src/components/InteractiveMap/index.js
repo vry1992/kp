@@ -240,21 +240,27 @@ const MapContent = ({ data, settings }) => {
                 </strong>
                 <p>Виялений {parseDate(item.discoverTimestamp)}</p>
                 <div className="d-flex justify-content-around">
-                  <CustomButton
-                    onClick={() => onEditClick(item)}
-                    iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
-                    size="sm"
-                  />{' '}
+                  {item.shipProject ? (
+                    <CustomButton
+                      onClick={() => onEditClick(item)}
+                      iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                      size="sm"
+                    />
+                  ) : null}
+
                   <CustomButton
                     onClick={() => onDeleteClick(item)}
                     iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
                     size="sm"
                   />
-                  <CustomButton
-                    onClick={() => onShowRouteClick(item)}
-                    iconPath={`${process.env.PUBLIC_URL}/images/icons/route.png`}
-                    size="sm"
-                  />
+
+                  {item.shipProject ? (
+                    <CustomButton
+                      onClick={() => onShowRouteClick(item)}
+                      iconPath={`${process.env.PUBLIC_URL}/images/icons/route.png`}
+                      size="sm"
+                    />
+                  ) : null}
                 </div>
               </Popup>
             </>

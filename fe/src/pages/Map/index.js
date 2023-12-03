@@ -15,8 +15,10 @@ function DropDown({ onSelect }) {
       title="Налаштування"
       size="sm"
       variant="secondary"
-      style={{ position: 'absolute', bottom: '25px', zIndex: 2000 }}>
-      <Dropdown.Item onClick={() => onSelect('showLast')}>Показати останні</Dropdown.Item>
+      style={{ position: 'absolute', bottom: '0px', right: 0, zIndex: 90000 }}>
+      <Dropdown.Item onClick={() => onSelect('showLast')}>
+        Показати чи приховати останні
+      </Dropdown.Item>
     </DropdownButton>
   );
 }
