@@ -232,12 +232,10 @@ const MapContent = ({ data, settings }) => {
             draggable={true}>
             <>
               <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
-                {item.shipName}
+                <strong>{item.shipName}</strong>
               </Tooltip>
               <Popup closeButton={false}>
-                <strong>
-                  {shipTypes[item.shipType]?.short || ''} &ldquo;{item.shipName}&rdquo;
-                </strong>
+                <strong>{item.shipName}</strong>
                 <p>Виялений {parseDate(item.discoverTimestamp)}</p>
                 <div className="d-flex justify-content-around">
                   {item.shipProject ? (
