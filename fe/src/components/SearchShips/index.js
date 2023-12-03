@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
@@ -14,15 +14,17 @@ import { coordinatesConverter } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 import './index.scss';
 import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
+import { AddUnknownShipForm } from '../AddUnknownShipForm';
 
 const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
 const dutyData = storageData ? JSON.parse(storageData) : null;
 
-export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
+export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   const dispatch = useDispatch();
   const unitNames = useSelector(getUnitNames);
   const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
+  const [unknownShips, setUnknownShips] = useState([]);
 
   const initialValues = {
     ...Object.fromEntries(
@@ -69,6 +71,12 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     resetShipList();
   }
 
+  useEffect(() => {
+    resetForm();
+    setUnknownShips([]);
+    resetShipList();
+  }, [addUnknown]);
+
   function onSubmit() {
     const {
       date,
@@ -83,9 +91,11 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
       companionCallsign,
       shipCallsign
     } = values;
+
     const dataToSubmit = {
       shipId: selectedShipData?.shipId,
       discoverTimestamp: new Date(date).getTime(),
+      data: JSON.stringify(unknownShips),
       personName,
       frequency,
       ...(latitudeDegs &&
@@ -189,28 +199,39 @@ export function SearchShipByKeyWords({ selectedShipData, resetShipList }) {
     });
   };
 
-  useEffect(() => {
-    console.log(selectedShipData);
-  }, [selectedShipData]);
+  const onSaveUnknown = (unknownList) => {
+    setUnknownShips(Object.values(unknownList));
+  };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <Row className="justify-content-md-center">
-          {renderSearchShipForm()}
-          {selectedShipData?.shipId && (
+          {addUnknown ? (
             <Col xs="10">
-              <div className="edit-button">
-                <CustomButton
-                  text="Змінити"
-                  iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
-                  onClick={editButtonClickHandler}
-                />
-              </div>
+              <AddUnknownShipForm
+                onSaveUnknown={onSaveUnknown}
+                isDisabled={!!Object.values(unknownShips).length}
+              />
             </Col>
+          ) : (
+            <>
+              {renderSearchShipForm()}
+              {selectedShipData?.shipId && (
+                <Col xs="10">
+                  <div className="edit-button">
+                    <CustomButton
+                      text="Змінити"
+                      iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                      onClick={editButtonClickHandler}
+                    />
+                  </div>
+                </Col>
+              )}
+            </>
           )}
         </Row>
-        {selectedShipData?.shipId && (
+        {(unknownShips.length || selectedShipData?.shipId) && (
           <Row className="justify-content-md-center">
             {renderShipInfoForm()}
             <Col xs={10}>

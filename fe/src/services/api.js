@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { shipTypes } from '../constants';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -26,7 +27,8 @@ const normalizePostShipDataResponse = ({
   latitude,
   longitude,
   id: dataId,
-  personEditName
+  personEditName,
+  data
 }) => {
   return {
     personsWhoAdded,
@@ -35,7 +37,8 @@ const normalizePostShipDataResponse = ({
     latitude,
     longitude,
     dataId,
-    personEditName
+    personEditName,
+    data
   };
 };
 
@@ -44,7 +47,11 @@ const normalizePostUnitResponse = (data) => {
 };
 
 const normalizeSearchShipKeyword = (data) => {
-  return data.map(({ ship_id: shipId, ship_name: shipName }) => ({ shipId, shipName }));
+  return data.map(({ ship_id: shipId, ship_name: shipName, ship_type: shipType }) => ({
+    shipId,
+    shipName,
+    shipType
+  }));
 };
 
 export async function apiGetInit() {
@@ -81,9 +88,9 @@ const normalizeFilterResponse = (data) => {
     ({
       additional_information: additionalInformation,
       companion_callsign: companionCallsign,
-      create_timestamp: createTimestamp,
+      create_timestamp_utc: createTimestamp,
       data_id: dataId,
-      discover_timestamp: discoverTimestamp,
+      discover_timestamp_utc: discoverTimestamp,
       edit_timestamp: editTimestamp,
       fk_ship_data_id: shipId,
       frequency,
@@ -92,12 +99,9 @@ const normalizeFilterResponse = (data) => {
       peleng,
       person_who_added: personsWhoAdded,
       person_who_edited: personWhoEdited,
-      ship_bort_number: shipBortNumber,
       ship_callsign: shipCallsign,
-      ship_city: shipCity,
-      ship_name: shipName,
-      ship_project: shipProject,
-      ship_type: shipType
+      ship,
+      unknownData
     }) => ({
       additionalInformation,
       companionCallsign,
@@ -112,12 +116,17 @@ const normalizeFilterResponse = (data) => {
       peleng,
       personsWhoAdded,
       personWhoEdited,
-      shipBortNumber,
       shipCallsign,
-      shipCity,
-      shipName,
-      shipProject,
-      shipType
+      shipBortNumber: ship?.ship_bort_number,
+      shipCity: ship?.ship_city,
+      shipName:
+        ship?.ship_name && ship?.ship_type
+          ? `${shipTypes[ship.ship_type]?.short} ${ship.ship_name}`
+          : JSON.parse(unknownData)
+              .map(({ shipName, type }) => `${shipTypes[type]?.short} ${shipName}`)
+              .join(' / '),
+      shipProject: ship?.ship_project,
+      shipType: ship?.ship_type
     })
   );
 };

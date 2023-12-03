@@ -84,7 +84,7 @@ export function Search() {
             {Object.keys(filterTableConfig.topLine).map((col, idx) => (
               <td rowSpan={idx === 0 ? 4 : 1} key={`${col}_${index}`}>
                 <CustomTooltip text={filterTableConfig.topLine[col].text}>
-                  <span>{col === 'shipType' ? shipTypes[row[col]].name : row[col]}</span>
+                  <span>{col === 'shipType' ? shipTypes[row[col]]?.name : row[col]}</span>
                 </CustomTooltip>
                 {idx === 0 ? (
                   <div>
@@ -119,7 +119,8 @@ export function Search() {
                   Object.keys(filterTableConfig.thirdLine).length
                 }
                 key={`${key}_${index}`}>
-                {text} <i>{key === 'createTimestamp' ? parseDate(Number(row[key])) : row[key]}</i>
+                {text}
+                <i>{key === 'createTimestamp' ? parseDate(row[key]) : row[key]}</i>
               </td>
             ))}
           </tr>
@@ -153,9 +154,10 @@ export function Search() {
     <div className="search">
       <Headline text="Пошук" />
       <SearchForm />
-      {filterShipsData.length && (
+      {filterShipsData.length ? (
         <CustomButton text="Відобразити на карті" onClick={onShowOnMapClick} />
-      )}
+      ) : null}
+      <br />
       <Table responsive>
         <thead>
           <tr>

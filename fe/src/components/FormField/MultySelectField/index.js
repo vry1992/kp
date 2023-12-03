@@ -21,6 +21,8 @@ export const MultySelectField = (fieldProps) => {
     ...restProps
   } = fieldProps;
 
+  console.log(restProps.value);
+
   const [optionsList, setOptionsList] = useState([]);
   const [selected, setSelected] = useState(restProps.value || []);
   const [values, setValues] = useState('');
@@ -46,7 +48,7 @@ export const MultySelectField = (fieldProps) => {
   );
 
   useEffect(() => {
-    setValues(selected.map(({ label }) => label).join(', '));
+    Array.isArray(selected) && setValues(selected.map(({ label }) => label).join(', '));
   }, [selected]);
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export const MultySelectField = (fieldProps) => {
                     onBlur={onBlur}
                     label={label}
                     type="checkbox"
-                    checked={!!selected.find((item) => item.key === key)}
+                    checked={Array.isArray(selected) && !!selected.find((item) => item.key === key)}
                   />
                 </ListGroup.Item>
               );

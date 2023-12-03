@@ -29,8 +29,6 @@ const initialValues = {
   dateFrom: defaultDateFrom,
   dateTo: defaultDateTo
 };
-const storage = localStorage.getItem(SEARCH_KEY);
-const storedFilters = storage ? JSON.parse(storage) : initialValues;
 
 export function SearchForm() {
   const { validationSchema } = useValidation(searchFormFields);
@@ -40,19 +38,35 @@ export function SearchForm() {
   const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
   const dispatch = useDispatch();
 
-  const { values, handleSubmit, handleBlur, handleChange, touched, errors, setFieldValue } =
-    useFormik({
-      initialValues: {
-        dateTo: new Date(storedFilters.dateTo) || defaultDateTo,
-        dateFrom: new Date(storedFilters.dateFrom) || defaultDateFrom,
-        shipNameList: storedFilters.shipNameList || [],
-        frequency: storedFilters.frequency || '',
-        shipCallsignList: storedFilters.shipCallsignList || [],
-        personNameList: storedFilters.personNameList || []
-      },
-      validationSchema,
-      onSubmit
-    });
+  const {
+    values,
+    handleSubmit,
+    handleBlur,
+    handleChange,
+    touched,
+    errors,
+    setFieldValue,
+    setValues
+  } = useFormik({
+    initialValues: {
+      dateTo: new Date(initialValues.dateTo) || defaultDateTo,
+      dateFrom: new Date(initialValues.dateFrom) || defaultDateFrom,
+      shipNameList: initialValues.shipNameList || [],
+      frequency: initialValues.frequency || '',
+      shipCallsignList: initialValues.shipCallsignList || [],
+      personNameList: initialValues.personNameList || []
+    },
+    validationSchema,
+    onSubmit
+  });
+
+  useEffect(() => {
+    const storage = localStorage.getItem(SEARCH_KEY);
+    if (storage) {
+      const storedFilters = JSON.parse(storage);
+      setValues(storedFilters);
+    }
+  }, []);
 
   function onSubmit(values) {
     const { frequency, personNameList, shipNameList, shipCallsignList, dateFrom, dateTo } = values;
@@ -65,6 +79,7 @@ export function SearchForm() {
       dateFrom: new Date(dateFrom).getTime()
     };
     localStorage.setItem(SEARCH_KEY, JSON.stringify({ ...values }));
+
     dispatch(
       filterShips({
         data: dataToSubmit,
@@ -78,9 +93,9 @@ export function SearchForm() {
     (name) => {
       if (name === searchFormFields.shipNameList.fieldName) {
         return getShipsSelectOptionsFromArray(shipNamesOptions || []);
-      } else if (name === searchFormFields.shipCallsignList.fieldName)
+      } else if (name === searchFormFields.shipCallsignList?.fieldName)
         return getSelectOptionsFromArray(callSignsOptions || []);
-      else if (name === searchFormFields.personNameList.fieldName)
+      else if (name === searchFormFields.personNameList?.fieldName)
         return getSelectOptionsFromArray(personsWhoAddedOptions || []);
     },
     [shipNamesOptions, callSignsOptions, personsWhoAddedOptions]

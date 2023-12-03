@@ -36,5 +36,6 @@ export const getShipsSelectOptionsFromArray = (array) => {
   return array.map((item) => ({ key: item.ship_id, label: item.ship_name }));
 };
 
-export const parseDate = (timestamp) =>
-  new Date(timestamp + new Date().getTimezoneOffset() * 60 * 1000).toLocaleString();
+export const parseDate = (timestamp) => {
+  return new Date(timestamp).toLocaleString();
+};

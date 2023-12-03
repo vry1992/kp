@@ -39,6 +39,8 @@ export function FormField(fieldProps) {
     <Form.FloatingLabel label={`${label} ${required ? '*' : ''}`} className="mb-3">
       <Form.Select
         aria-label="Default select example"
+        value={restProps.value}
+        disabled={restProps.disabled}
         type={type}
         placeholder={placeholder}
         onChange={onChange}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SearchShipByKeyWords } from '../../components/SearchShipByKeyWords';
+import { SearchShips } from '../../components/SearchShips';
 import { Headline } from '../../components/Headline';
-import { Col, ListGroup, Row } from 'react-bootstrap';
+import { Col, ListGroup, Row, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSearchShipsList, getUnitNames } from '../../selectors';
 import { setSearchShipsList } from '../../reducers/ships';
@@ -17,6 +17,7 @@ export function ShipInfo() {
   const searchShipsList = useSelector(getSearchShipsList);
   const [selectedShipData, setSelectedShipData] = useState(selectedShip);
   const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
+  const [addKnownCheckbox, setAddKnownCheckbox] = useState(false);
   const unitNames = useSelector(getUnitNames);
   const navigate = useNavigate();
 
@@ -66,8 +67,27 @@ export function ShipInfo() {
   return (
     <div className="ship-info">
       <Headline text="Додати інформацію про виявлений корабель" />
-      <SearchShipByKeyWords selectedShipData={selectedShipData} resetShipList={resetShipList} />
-      {!selectedShipData?.shipId && renderShipsList()}
+
+      <Form.Check
+        type="switch"
+        id="custom-switch"
+        label="Додати НЕ визначений корабель / кораблі?"
+        checked={addKnownCheckbox}
+        onChange={() => {
+          setAddKnownCheckbox(!addKnownCheckbox);
+        }}
+        style={{
+          padding: '20px',
+          color: 'red'
+        }}
+      />
+
+      <SearchShips
+        selectedShipData={selectedShipData}
+        resetShipList={resetShipList}
+        addUnknown={addKnownCheckbox}
+      />
+      {!addKnownCheckbox && !selectedShipData?.shipId && renderShipsList()}
       {iseRefuseModalOpen && (
         <RefuseAddNewShipModal
           show={iseRefuseModalOpen}

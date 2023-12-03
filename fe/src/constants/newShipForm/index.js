@@ -1,6 +1,6 @@
 import { shipTypes } from '..';
 
-const getTypesOptions = () => {
+export const getTypesOptions = () => {
   const sortedByAlphabet = Object.values(shipTypes).sort((a, b) => {
     if (a.name > b.name) return 1;
     if (a.name < b.name) return -1;

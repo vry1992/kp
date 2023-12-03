@@ -24,7 +24,7 @@ import { ClickOnMapPopup } from '../ClickOnMapPopup';
 
 const defaultZoom = 6;
 
-const MapContent = ({ data }) => {
+const MapContent = ({ data, settings }) => {
   const [, setZoom] = useState(defaultZoom);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -42,6 +42,25 @@ const MapContent = ({ data }) => {
       setClickCoordinates(e.latlng);
     }
   });
+
+  useEffect(() => {
+    if (settings.showLast) {
+      const groupedByDate = content.reduce((acc, curr) => {
+        const existed = acc[curr.shipName] ? acc[curr.shipName] : [];
+        acc[curr.shipName] = [...existed, curr]
+          .sort(
+            (a, b) =>
+              new Date(b.discoverTimestamp).getTime() - new Date(a.discoverTimestamp).getTime()
+          )
+          .slice(0, 1);
+        return acc;
+      }, {});
+
+      setContent(Object.values(groupedByDate).flat());
+    } else {
+      setContent([]);
+    }
+  }, [settings.showLast]);
 
   useEffect(() => {
     setContent(ships);
@@ -75,7 +94,7 @@ const MapContent = ({ data }) => {
   const iconPerson = (markerData) =>
     new L.DivIcon({
       html: `<div style="position: relative"><p style="position: absolute;z-index:1;text-align:center;width:100%;transform: translateY(45%);color:#ffffff">${
-        shipTypes[markerData.shipType].short
+        shipTypes[markerData.shipType]?.short || ''
       }</p><img src="${process.env.PUBLIC_URL}/images/signs/emptyShip.svg"></div>`,
       // html: ShipIcon(),
       iconSize: [35, 35],
@@ -217,9 +236,9 @@ const MapContent = ({ data }) => {
               </Tooltip>
               <Popup closeButton={false}>
                 <strong>
-                  {shipTypes[item.shipType].name} &ldquo;{item.shipName}&rdquo;
+                  {shipTypes[item.shipType]?.short || ''} &ldquo;{item.shipName}&rdquo;
                 </strong>
-                <p>Виялений {parseDate(+item.discoverTimestamp)}</p>
+                <p>Виялений {parseDate(item.discoverTimestamp)}</p>
                 <div className="d-flex justify-content-around">
                   <CustomButton
                     onClick={() => onEditClick(item)}
@@ -252,10 +271,10 @@ const MapContent = ({ data }) => {
   );
 };
 
-export const InteractiveMap = ({ data }) => {
+export const InteractiveMap = ({ data, settings }) => {
   return (
     <MapContainer center={[44.2976268, 31.7484256]} zoom={defaultZoom} cli>
-      <MapContent data={data} />
+      <MapContent data={data} settings={settings} />
     </MapContainer>
   );
 };
