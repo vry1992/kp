@@ -15,6 +15,7 @@ import { CustomButton } from '../CustomButton';
 import './index.scss';
 import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
 import { AddUnknownShipForm } from '../AddUnknownShipForm';
+import { useNavigate } from 'react-router-dom';
 
 const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
 const dutyData = storageData ? JSON.parse(storageData) : null;
@@ -25,6 +26,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
   const [unknownShips, setUnknownShips] = useState([]);
+  const navigate = useNavigate();
 
   const initialValues = {
     ...Object.fromEntries(
@@ -63,6 +65,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
     setValues(initialValues);
     resetForm();
     resetShipList();
+    navigate('/map');
   }
 
   function onFailSubmit() {

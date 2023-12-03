@@ -1,5 +1,5 @@
 import React from 'react';
 
-export function Headline({ tagName: TagName = 'h1', text }) {
-  return <TagName>{text}</TagName>;
+export function Headline({ tagName: TagName = 'h1', text, style = {} }) {
+  return <TagName style={style}>{text}</TagName>;
 }

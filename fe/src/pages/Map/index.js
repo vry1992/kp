@@ -40,10 +40,15 @@ export function Map() {
   return (
     <div className="map">
       <div className="map_title">
-        <Headline text="РОБОЧА КАРТА" tagName={'h3'} />
+        <Headline
+          text="РОБОЧА КАРТА"
+          tagName={'b'}
+          style={{ display: 'block', fontSize: '24px' }}
+        />
         <Headline
           text="чергового командного пункту загону РЕР військової частини А1892"
-          tagName={'h4'}
+          tagName={'b'}
+          style={{ display: 'block', fontSize: '20px' }}
         />
       </div>
 
@@ -68,15 +73,21 @@ export function Map() {
         <div className="map_footer">
           <Headline
             text="Черговий командного пункту загону РЕР військової частини А1892"
-            tagName={'h5'}
+            tagName={'b'}
+            style={{ display: 'block', fontSize: '18px' }}
           />
           <div className="d-flex signiture">
             <Headline
               text={getRanksOptions().find(({ key }) => key === sign.dutyManRank)?.label}
-              tagName={'h5'}
+              tagName={'b'}
+              style={{ display: 'block', fontSize: '18px' }}
             />
             <div style={{ width: '37%' }}></div>
-            <Headline text={sign?.dutyManFullName} tagName={'h5'} />
+            <Headline
+              text={sign?.dutyManFullName}
+              tagName={'b'}
+              style={{ display: 'block', fontSize: '18px' }}
+            />
           </div>
         </div>
       ) : (
