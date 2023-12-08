@@ -8,6 +8,12 @@ export const shipTypes = {
     name: 'Ракетний крейсер',
     icon: 'rkr'
   },
+  pdrk: {
+    short: 'пдрк',
+    type: 'pdrk',
+    name: 'Протидиверсійний катер',
+    icon: 'pdrk'
+  },
   skr: {
     short: 'скр',
     type: 'skr',
