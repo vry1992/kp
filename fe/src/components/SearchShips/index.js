@@ -63,13 +63,17 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   });
 
   function onSuccessSubmit() {
+    setIsLoading(false);
     setValues(initialValues);
     resetForm();
     resetShipList();
-    navigate('/map');
+    setTimeout(() => {
+      navigate('/map');
+    }, 500);
   }
 
   function onFailSubmit() {
+    setIsLoading(false);
     setValues(initialValues);
     resetForm();
     resetShipList();
@@ -111,6 +115,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
       ...(shipCallsign && { shipCallsign }),
       ...(companionCallsign && { companionCallsign })
     };
+    setIsLoading(true);
     dispatch(
       postShipData({
         data: dataToSubmit,
@@ -248,7 +253,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
           <Row className="justify-content-md-center">
             {renderShipInfoForm()}
             <Col xs={10}>
-              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid} />
+              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid || isLoading} />
             </Col>
           </Row>
         )}
