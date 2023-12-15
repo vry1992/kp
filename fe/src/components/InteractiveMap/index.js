@@ -301,7 +301,7 @@ const MapContent = ({ data, settings }) => {
 
 export const InteractiveMap = ({ data, settings }) => {
   return (
-    <MapContainer center={[44.2976268, 31.7484256]} zoom={defaultZoom} cli>
+    <MapContainer center={[44.2976268, 31.7484256]} zoom={defaultZoom} cli maxZoom={11}>
       <MapContent data={data} settings={settings} />
     </MapContainer>
   );
