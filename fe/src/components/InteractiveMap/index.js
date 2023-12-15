@@ -21,6 +21,8 @@ import { SEARCH_KEY } from '../../constants/searchForm';
 import { UpdateOrCreateNewPopup } from '../UpdateOrCreatePopup';
 import './index.scss';
 import { ClickOnMapPopup } from '../ClickOnMapPopup';
+import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
+import { Loader } from '../Loader';
 
 const defaultZoom = 6;
 
@@ -35,13 +37,47 @@ const MapContent = ({ data, settings }) => {
   const [clickOnMapPopup, setClickOnMapPopup] = useState(false);
   const [routes, setRoutes] = useState({});
   const [clickCoordinates, setClickCoordinates] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const map = useMapEvents({
+  useMapEvents({
     dblclick(e) {
       setClickOnMapPopup(true);
       setClickCoordinates(e.latlng);
     }
   });
+
+  useEffect(() => {
+    const filters = localStorage.getItem(SEARCH_KEY);
+    const dutyInfo = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
+    if (filters) {
+      const dataToSubmit = JSON.parse(filters);
+      setIsLoading(true);
+      dispatch(
+        filterShips({
+          data: {
+            ...dataToSubmit,
+            dateTo: new Date(dataToSubmit.dateTo).getTime(),
+            dateFrom: new Date(dataToSubmit.dateFrom).getTime(),
+            shipNameList: dataToSubmit?.shipNameList?.map(({ key }) => key) || []
+          },
+          onSuccess: () => setIsLoading(true),
+          onError: () => setIsLoading(false)
+        })
+      );
+    } else if (!filters && dutyInfo) {
+      setIsLoading(true);
+      const { dutyStartDate } = JSON.parse(dutyInfo);
+      const dateFrom = new Date(dutyStartDate).getTime();
+      const dateTo = new Date().getTime();
+      dispatch(
+        filterShips({
+          data: { dateTo, dateFrom },
+          onSuccess: () => setIsLoading(true),
+          onError: () => setIsLoading(false)
+        })
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (settings.showLast) {
@@ -65,25 +101,6 @@ const MapContent = ({ data, settings }) => {
   useEffect(() => {
     setContent(ships);
   }, [ships]);
-
-  useEffect(() => {
-    if (!content?.length) {
-      const filters = localStorage.getItem(SEARCH_KEY);
-      if (filters) {
-        const dataToSubmit = JSON.parse(filters);
-        dispatch(
-          filterShips({
-            data: {
-              ...dataToSubmit,
-              dateTo: new Date(dataToSubmit.dateTo).getTime(),
-              dateFrom: new Date(dataToSubmit.dateFrom).getTime(),
-              shipNameList: dataToSubmit?.shipNameList?.map(({ key }) => key) || []
-            }
-          })
-        );
-      }
-    }
-  }, [content]);
 
   const mapEvents = useMapEvents({
     zoomend: () => {
@@ -206,6 +223,7 @@ const MapContent = ({ data, settings }) => {
 
   return (
     <>
+      {isLoading && <Loader />}
       <UpdateOrCreateNewPopup
         show={updateOrCreatePopup}
         onMoveCurrentPress={onMoveCurrentPress}
