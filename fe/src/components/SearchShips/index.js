@@ -66,7 +66,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
     setValues(initialValues);
     resetForm();
     resetShipList();
-    navigate('/map');
+    navigate('/map', { state: { update: true } });
   }
 
   function onFailSubmit() {
