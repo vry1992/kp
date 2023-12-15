@@ -16,6 +16,7 @@ import './index.scss';
 import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
 import { AddUnknownShipForm } from '../AddUnknownShipForm';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../Loader';
 
 const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
 const dutyData = storageData ? JSON.parse(storageData) : null;
@@ -27,7 +28,8 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
   const [unknownShips, setUnknownShips] = useState([]);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false);
 
   const initialValues = {
     ...Object.fromEntries(
@@ -63,17 +65,17 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   });
 
   function onSuccessSubmit() {
-    setIsLoading(false);
+    setIsGlobalLoading(false);
     setValues(initialValues);
     resetForm();
     resetShipList();
     setTimeout(() => {
       navigate('/map');
-    }, 500);
+    }, 300);
   }
 
   function onFailSubmit() {
-    setIsLoading(false);
+    setIsGlobalLoading(false);
     setValues(initialValues);
     resetForm();
     resetShipList();
@@ -115,7 +117,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
       ...(shipCallsign && { shipCallsign }),
       ...(companionCallsign && { companionCallsign })
     };
-    setIsLoading(true);
+    setIsGlobalLoading(true);
     dispatch(
       postShipData({
         data: dataToSubmit,
@@ -222,42 +224,46 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <Row className="justify-content-md-center">
-          {addUnknown ? (
-            <Col xs="10">
-              <AddUnknownShipForm
-                onSaveUnknown={onSaveUnknown}
-                isDisabled={!!Object.values(unknownShips).length}
-              />
-            </Col>
-          ) : (
-            <>
-              {renderSearchShipForm()}
-              {selectedShipData?.shipId && (
-                <Col xs="10">
-                  <div className="edit-button">
-                    <CustomButton
-                      text="Змінити"
-                      iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
-                      onClick={editButtonClickHandler}
-                    />
-                  </div>
-                </Col>
-              )}
-            </>
-          )}
-        </Row>
-        {isLoading && 'Пошук...'}
-        {(unknownShips.length || selectedShipData?.shipId) && (
+      {isGlobalLoading ? (
+        <Loader />
+      ) : (
+        <form onSubmit={handleSubmit}>
           <Row className="justify-content-md-center">
-            {renderShipInfoForm()}
-            <Col xs={10}>
-              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid || isLoading} />
-            </Col>
+            {addUnknown ? (
+              <Col xs="10">
+                <AddUnknownShipForm
+                  onSaveUnknown={onSaveUnknown}
+                  isDisabled={!!Object.values(unknownShips).length}
+                />
+              </Col>
+            ) : (
+              <>
+                {renderSearchShipForm()}
+                {selectedShipData?.shipId && (
+                  <Col xs="10">
+                    <div className="edit-button">
+                      <CustomButton
+                        text="Змінити"
+                        iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                        onClick={editButtonClickHandler}
+                      />
+                    </div>
+                  </Col>
+                )}
+              </>
+            )}
           </Row>
-        )}
-      </form>
+          {isLoading && 'Пошук...'}
+          {(unknownShips.length || selectedShipData?.shipId) && (
+            <Row className="justify-content-md-center">
+              {renderShipInfoForm()}
+              <Col xs={10}>
+                <CustomButton text="Зберегти" type="submit" disabled={!isFormValid || isLoading} />
+              </Col>
+            </Row>
+          )}
+        </form>
+      )}
     </div>
   );
 }
