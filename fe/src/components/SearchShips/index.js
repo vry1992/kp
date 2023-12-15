@@ -27,6 +27,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
   const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
   const [unknownShips, setUnknownShips] = useState([]);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState();
 
   const initialValues = {
     ...Object.fromEntries(
@@ -125,6 +126,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
 
   function onFailSearch() {
     setFieldError('search', errorSearchShip);
+    setIsLoading(false);
   }
 
   function onChange(event) {
@@ -135,8 +137,15 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
     if (name === 'search') {
       setFieldTouched('search', true);
     }
-    if (!selectedShipData?.shipId && value.length && value.length % 2 === 0) {
-      onSubmitSearch({ data: { search: value }, onError: onFailSearch });
+    if (!selectedShipData?.shipId && value.length) {
+      setIsLoading(true);
+      onSubmitSearch({
+        data: { search: value },
+        onError: onFailSearch,
+        onSuccess: () => {
+          setIsLoading(false);
+        }
+      });
     }
   }
 
@@ -234,6 +243,7 @@ export function SearchShips({ selectedShipData, resetShipList, addUnknown }) {
             </>
           )}
         </Row>
+        {isLoading && 'Пошук...'}
         {(unknownShips.length || selectedShipData?.shipId) && (
           <Row className="justify-content-md-center">
             {renderShipInfoForm()}

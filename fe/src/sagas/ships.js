@@ -49,6 +49,7 @@ function* searchShipByKeyWord(action) {
     const result = yield call(apiPostSearchShipKeyword, payload.data);
     if (result.length) {
       yield put(setSearchShipsList(result));
+      payload.onSuccess && payload.onSuccess();
     } else {
       payload.onError();
       yield put(setSearchShipsList([]));

@@ -12,7 +12,6 @@ import { setSearchShipsList } from '../../reducers/ships';
 export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [variantsCount, setVariantsCount] = useState(1);
-  const [searchShipValue, setSearchShipValue] = useState('');
   const searchShipsList = useSelector(getSearchShipsList);
   const dispatch = useDispatch();
 
@@ -20,14 +19,22 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
     dispatch(postSearchShipKeyWord(payload));
   }
 
-  function onSearchShipChange(event) {
+  function onSearchShipChange(event, idx) {
     const {
       target: { value }
     } = event;
-    if (value.length && value.length % 2 === 0) {
-      onSubmitSearch({ data: { search: value }, onError: () => {} });
+    if (value.length) {
+      onSubmitSearch({ data: { search: value }, onError: () => {}, onSuccess: () => {} });
     }
-    setSearchShipValue(value);
+    setSelectedVariants((prev) => {
+      return {
+        ...prev,
+        [idx]: {
+          ...prev[idx],
+          search: value
+        }
+      };
+    });
   }
 
   const searchShipsListResult = useCallback(
@@ -93,7 +100,8 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
         [id]: {
           ...prev[id],
           shipId,
-          shipName
+          shipName,
+          search: ''
         }
       };
     });
@@ -116,14 +124,14 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
 
   const onChageType = (e, id) => {
     dispatch(setSearchShipsList([]));
-    setSearchShipValue('');
     setSelectedVariants((prev) => {
       return {
         ...prev,
         [id]: {
           shipId: '',
           shipName: '',
-          type: e.target.value
+          type: e.target.value,
+          search: ''
         }
       };
     });
@@ -148,8 +156,8 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
                   disabled={isDisabled}
                 />
                 <FormField
-                  onChange={onSearchShipChange}
-                  value={selectedVariants[idx]?.shipName || searchShipValue}
+                  onChange={(value) => onSearchShipChange(value, idx)}
+                  value={selectedVariants[idx]?.search || selectedVariants[idx]?.shipName}
                   type="text"
                   placeholder="Введіть назву корабля"
                   label="Введіть назву корабля"
@@ -179,7 +187,7 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
             </div>
 
             {!selectedVariants[idx]?.shipName ? renderShipsList(idx) : null}
-            {searchShipValue.length >= 2 &&
+            {selectedVariants[idx]?.search?.length >= 2 &&
             !searchShipsListResult(idx).length &&
             !selectedVariants[idx]?.shipName ? (
               <>
@@ -195,7 +203,6 @@ export const AddUnknownShipForm = ({ onSaveUnknown, isDisabled }) => {
           text={'Додати варіант'}
           onClick={() => {
             setVariantsCount(variantsCount + 1);
-            setSearchShipValue('');
           }}
           disabled={variantsCount > Object.keys(selectedVariants).length}
         />
