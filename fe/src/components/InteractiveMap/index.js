@@ -94,12 +94,15 @@ const MapContent = ({ data, settings }) => {
 
       setContent(Object.values(groupedByDate).flat());
     } else {
-      setContent([]);
+      setContent(ships);
     }
   }, [settings.showLast]);
 
   useEffect(() => {
     setContent(ships);
+    return () => {
+      setContent([]);
+    };
   }, [ships]);
 
   const mapEvents = useMapEvents({
@@ -121,6 +124,7 @@ const MapContent = ({ data, settings }) => {
   const getShipsRoutes = useCallback(
     (data) => {
       return data.reduce((acc, curr) => {
+        console.log(curr);
         if (!curr.latitude || !curr.longitude) return acc;
         const alreadyExistWithThiId = acc[curr.shipId] || [];
         const data = {
@@ -196,6 +200,7 @@ const MapContent = ({ data, settings }) => {
   const onShowRouteClick = useCallback(
     (marker) => {
       const { shipId } = marker;
+      console.log(shipId);
       if (routes[shipId]) {
         const newRoutes = { ...routes };
         delete newRoutes[shipId];
@@ -203,6 +208,7 @@ const MapContent = ({ data, settings }) => {
         return;
       }
       const currentShip = content.filter((contentItem) => contentItem.shipId === shipId);
+      console.log(currentShip);
       const shipRoutes = getShipsRoutes(currentShip);
       setRoutes({ ...routes, ...shipRoutes });
     },

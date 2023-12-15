@@ -89,11 +89,14 @@ export function Search() {
                 </CustomTooltip>
                 {idx === 0 ? (
                   <div>
-                    <CustomButton
-                      onClick={() => onEditClick(row)}
-                      iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
-                      size="sm"
-                    />
+                    {col === 'shipType' ? (
+                      <CustomButton
+                        onClick={() => onEditClick(row)}
+                        iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`}
+                        size="sm"
+                      />
+                    ) : null}
+
                     <br />
                     <CustomButton
                       onClick={() => onDeleteClick(row)}

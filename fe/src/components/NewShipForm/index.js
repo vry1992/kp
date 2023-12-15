@@ -25,6 +25,7 @@ export function NewShipForm() {
   const { validationSchema } = useValidation(newShipFormConfig);
   const { checkIsFormValid, isFormValid } = useForm(newShipFormConfig);
   const [errorModal, setErrorModal] = useState({ open: false, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const { values, handleChange, handleSubmit, errors, touched, handleBlur, resetForm } = useFormik({
     initialValues,
@@ -33,14 +34,17 @@ export function NewShipForm() {
   });
 
   const onSuccess = () => {
+    setIsLoading(false);
     navigate(routesConfig.successAddedShip.path, { state: values });
   };
 
   const onError = (message) => {
     setErrorModal({ open: true, message });
+    setIsLoading(false);
   };
 
   function onSubmit() {
+    setIsLoading(true);
     dispatch(postShip(values, onSuccess, onError));
   }
 
@@ -112,17 +116,23 @@ export function NewShipForm() {
           <Row className="justify-content-md-center">
             <Col xs={6}>
               <MandatoryFieldsNotification />
-              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid} />
+              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid || isLoading} />
+              {isLoading && 'Збереження...'}
             </Col>
           </Row>
         </form>
       </div>
       <Modal show={errorModal.open} isError={true}>
         <Paragraph text={errorModal.message} />
-        <CustomButton onClick={onAnotherShipClick} text="Ввести інший корабель" />
+        <CustomButton
+          onClick={onAnotherShipClick}
+          text="Ввести інший корабель"
+          disabled={isLoading}
+        />
         <CustomButton
           onClick={toShipInfoPage}
           text={`Ввести інформацію про виявлення ${values[newShipFormConfig.shipName.fieldName]}`}
+          disabled={isLoading}
         />
       </Modal>
     </>

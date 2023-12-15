@@ -93,7 +93,6 @@ const normalizeFilterResponse = (data) => {
       data_id: dataId,
       discover_timestamp_utc: discoverTimestamp,
       edit_timestamp: editTimestamp,
-      fk_ship_data_id: shipId,
       frequency,
       latitude,
       longitude,
@@ -110,7 +109,6 @@ const normalizeFilterResponse = (data) => {
       dataId,
       discoverTimestamp,
       editTimestamp,
-      shipId,
       frequency,
       latitude,
       longitude,
@@ -118,6 +116,11 @@ const normalizeFilterResponse = (data) => {
       personsWhoAdded,
       personWhoEdited,
       shipCallsign,
+      shipId:
+        ship?.ship_id ||
+        JSON.parse(unknownData)
+          ?.map(({ shipName, type }) => `${shipTypes[type]?.short} ${shipName}`)
+          .join(' / '),
       shipBortNumber: ship?.ship_bort_number,
       shipCity: ship?.ship_city,
       shipName:

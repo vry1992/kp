@@ -21,6 +21,7 @@ export function NewUnitForm() {
   const { validationSchema } = useValidation(newUnitFormConfig);
   const { checkIsFormValid, isFormValid } = useForm(newUnitFormConfig);
   const [errorModal, setErrorModal] = useState({ open: false, message: '' });
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const { values, handleChange, handleSubmit, errors, touched, handleBlur, resetForm } = useFormik({
@@ -31,13 +32,16 @@ export function NewUnitForm() {
 
   const onSuccess = () => {
     navigate(routesConfig.successAddedunit.path, { state: values });
+    setIsLoading(false);
   };
 
   const onError = (message) => {
     setErrorModal({ open: true, message });
+    setIsLoading(false);
   };
 
   function onSubmit() {
+    setIsLoading(true);
     dispatch(postUnit(values, onSuccess, onError));
   }
 
@@ -95,7 +99,7 @@ export function NewUnitForm() {
           <Row className="justify-content-md-center">
             <Col xs={6}>
               <MandatoryFieldsNotification />
-              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid} />
+              <CustomButton text="Зберегти" type="submit" disabled={!isFormValid || isLoading} />
             </Col>
           </Row>
         </form>

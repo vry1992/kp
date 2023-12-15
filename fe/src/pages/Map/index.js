@@ -10,7 +10,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { SEARCH_KEY } from '../../constants/searchForm';
 import { format } from 'date-fns';
 
-function DropDown({ onSelect }) {
+function DropDown({ onSelect, settings }) {
   return (
     <DropdownButton
       id="dropdown-basic-button"
@@ -19,7 +19,7 @@ function DropDown({ onSelect }) {
       variant="secondary"
       style={{ position: 'absolute', bottom: '0px', right: 0, zIndex: 90000 }}>
       <Dropdown.Item onClick={() => onSelect('showLast')}>
-        Показати чи приховати останні
+        {settings.showLast ? 'Показати всі записи' : 'Показати унікальні записи'}
       </Dropdown.Item>
     </DropdownButton>
   );
@@ -97,6 +97,7 @@ export function Map() {
             };
           });
         }}
+        settings={settings}
       />
 
       <InteractiveMap
