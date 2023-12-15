@@ -30,7 +30,7 @@ const initialValues = {
   dateTo: defaultDateTo
 };
 
-export function SearchForm() {
+export function SearchForm({ setIsLoading }) {
   const { validationSchema } = useValidation(searchFormFields);
   const { checkIsFormValid } = useForm(searchFormFields);
   const shipNamesOptions = useSelector(getShipNamesOptions);
@@ -68,7 +68,13 @@ export function SearchForm() {
     }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(SEARCH_KEY, JSON.stringify(values));
+    onSubmit(values);
+  }, [values]);
+
   function onSubmit(values) {
+    setIsLoading(true);
     const { frequency, personNameList, shipNameList, shipCallsignList, dateFrom, dateTo } = values;
     const dataToSubmit = {
       ...(frequency && { frequency }),
@@ -78,13 +84,12 @@ export function SearchForm() {
       dateTo: new Date(dateTo).getTime(),
       dateFrom: new Date(dateFrom).getTime()
     };
-    localStorage.setItem(SEARCH_KEY, JSON.stringify({ ...values }));
 
     dispatch(
       filterShips({
         data: dataToSubmit,
-        onSuccess: () => console.log('success'),
-        onError: () => console.log('error')
+        onSuccess: () => setIsLoading(false),
+        onError: () => setIsLoading(false)
       })
     );
   }

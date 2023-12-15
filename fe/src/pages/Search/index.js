@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Headline } from '../../components/Headline';
 import { SearchForm } from '../../components/SearchForm';
 
@@ -17,6 +17,7 @@ import { deleteShipItemData } from '../../actions/ships';
 export function Search() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const filterTableConfig = {
     topLine: {
       shipName: {
@@ -153,23 +154,29 @@ export function Search() {
   return (
     <div className="search">
       <Headline text="Пошук" />
-      <SearchForm />
+      <SearchForm setIsLoading={setIsLoading} />
       {filterShipsData.length ? <CustomButton text="На карту" onClick={onShowOnMapClick} /> : null}
       <br />
-      <Table responsive>
-        <thead>
-          <tr>
-            {Object.entries(filterTableConfig.topLine).map(([key, { text }]) => {
-              return (
-                <th className="ships-table-head" key={key}>
-                  {text}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
-        <tbody>{renderTableBody()}</tbody>
-      </Table>
+      {isLoading ? (
+        'Завантаження...'
+      ) : filterShipsData.length ? (
+        <Table responsive>
+          <thead>
+            <tr>
+              {Object.entries(filterTableConfig.topLine).map(([key, { text }]) => {
+                return (
+                  <th className="ships-table-head" key={key}>
+                    {text}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>{renderTableBody()}</tbody>
+        </Table>
+      ) : (
+        'Відсутні дані по вказаним фільтрам'
+      )}
     </div>
   );
 }

@@ -21,8 +21,6 @@ export const MultySelectField = (fieldProps) => {
     ...restProps
   } = fieldProps;
 
-  console.log(restProps.value);
-
   const [optionsList, setOptionsList] = useState([]);
   const [selected, setSelected] = useState(restProps.value || []);
   const [values, setValues] = useState('');
