@@ -96,7 +96,7 @@ const MapContent = ({ data, settings }) => {
     } else {
       setContent(ships);
     }
-  }, [settings.showLast]);
+  }, [settings.showLast, ships]);
 
   useEffect(() => {
     setContent(ships);

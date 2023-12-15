@@ -50,15 +50,6 @@ export function Map() {
   });
   const [initFilters, setInitFilters] = useState(null);
 
-  if (location.state?.update) {
-    localStorage.setItem('SETTINGS', JSON.stringify(settings));
-    window.location.reload();
-    const sets = localStorage.getItem('SETTINGS');
-    if (sets) {
-      setSettings(sets);
-    }
-  }
-
   useEffect(() => {
     const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
     const dutyData = storageData ? JSON.parse(storageData) : null;
