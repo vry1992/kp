@@ -84,6 +84,7 @@ export async function apiEditShipData(body) {
 }
 
 const normalizeFilterResponse = (data) => {
+  if (!data) return [];
   return data.map(
     ({
       additional_information: additionalInformation,
@@ -123,7 +124,7 @@ const normalizeFilterResponse = (data) => {
         ship?.ship_name && ship?.ship_type
           ? `${shipTypes[ship.ship_type]?.short} ${ship.ship_name}`
           : JSON.parse(unknownData)
-              .map(({ shipName, type }) => `${shipTypes[type]?.short} ${shipName}`)
+              ?.map(({ shipName, type }) => `${shipTypes[type]?.short} ${shipName}`)
               .join(' / '),
       shipProject: ship?.ship_project,
       shipType: ship?.ship_type

@@ -154,9 +154,7 @@ export function Search() {
     <div className="search">
       <Headline text="Пошук" />
       <SearchForm />
-      {filterShipsData.length ? (
-        <CustomButton text="Відобразити на карті" onClick={onShowOnMapClick} />
-      ) : null}
+      {filterShipsData.length ? <CustomButton text="На карту" onClick={onShowOnMapClick} /> : null}
       <br />
       <Table responsive>
         <thead>

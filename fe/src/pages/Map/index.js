@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Headline } from '../../components/Headline';
 import { InteractiveMap } from '../../components/InteractiveMap';
 import { DUTY_INFO_STORAGE_KEY } from '../DutyInfo';
@@ -7,6 +7,8 @@ import './style.scss';
 import { getRanksOptions } from '../../constants/dutyInfoForm';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import { SEARCH_KEY } from '../../constants/searchForm';
+import { format } from 'date-fns';
 
 function DropDown({ onSelect }) {
   return (
@@ -22,17 +24,43 @@ function DropDown({ onSelect }) {
     </DropdownButton>
   );
 }
+
+const getDateOfFilters = (filters, dutyInfo) => {
+  if (filters) {
+    const { dateTo, dateFrom } = filters;
+    const from = format(new Date(dateFrom), 'dd.MM.yyyy, HH:mm');
+    const to = format(new Date(dateTo), 'dd.MM.yyyy, HH:mm');
+    return { from, to };
+  } else if (!filters && dutyInfo) {
+    const from = format(new Date(dutyInfo.dutyStartDate).setHours(9), 'dd.MM.yyyy, HH:mm');
+    const to = format(new Date(), 'dd.MM.yyyy, HH:mm');
+    return { from, to };
+  }
+  return {
+    from: format(new Date(), 'dd.MM.yyyy, HH:mm'),
+    to: format(new Date(), 'dd.MM.yyyy, HH:mm')
+  };
+};
 export function Map() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sign, setSign] = useState(null);
   const [settings, setSettings] = useState({
     showLast: false
   });
+  const [initFilters, setInitFilters] = useState(null);
 
   useEffect(() => {
     const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
     const dutyData = storageData ? JSON.parse(storageData) : null;
     setSign(dutyData);
+  }, []);
+
+  useEffect(() => {
+    const filters = localStorage.getItem(SEARCH_KEY);
+    if (filters) {
+      setInitFilters(JSON.parse(filters));
+    }
   }, []);
 
   const mapData = location.state || [];
@@ -49,6 +77,14 @@ export function Map() {
           text="чергового командного пункту загону РЕР військової частини А1892"
           tagName={'b'}
           style={{ display: 'block', fontSize: '20px' }}
+        />
+        <Headline
+          text={`${getDateOfFilters(initFilters, sign).from} - ${
+            getDateOfFilters(initFilters, sign).to
+          }`}
+          tagName={'b'}
+          style={{ display: 'block', fontSize: '20px', cursor: 'pointer' }}
+          onClick={() => navigate('/search')}
         />
       </div>
 
