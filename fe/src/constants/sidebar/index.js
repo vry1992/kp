@@ -11,6 +11,10 @@ export const sidebarLinks = {
     type: 'navigation',
     label: 'Додати інформацію про виявлений корабель'
   },
+  aircraftInfo: {
+    type: 'navigation',
+    label: 'Додати інформацію про виявлений літак'
+  },
   search: {
     type: 'navigation',
     label: 'Пошук'

@@ -10,6 +10,7 @@ import { SuccessAddedUnit } from '../pages/SuccessAddedUnit';
 import { ShipInfo } from '../pages/ShipInfo';
 import { EditShipInfo } from '../pages/EditShipInfo';
 import { DutyInfo } from '../pages/DutyInfo';
+import { AircraftInfo } from '../pages/AircraftInfo';
 
 export const routesConfig = {
   addNewShip: {
@@ -47,6 +48,10 @@ export const routesConfig = {
   dutyInfo: {
     path: '/duty-info',
     page: DutyInfo
+  },
+  aircraftInfo: {
+    path: '/aircraft',
+    page: AircraftInfo
   }
 };
 
