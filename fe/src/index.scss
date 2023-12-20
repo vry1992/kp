@@ -12,3 +12,22 @@ label {
 .form-check-label {
   width: 100%;
 }
+
+.leaflet-tooltip {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  &::before {
+    display: none !important;
+  }
+}
+
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+  overflow: hidden !important;
+
+  img {
+    transform: translateY(-2px) scale(4) !important;
+  }
+}
