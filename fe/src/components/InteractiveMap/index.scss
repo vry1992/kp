@@ -9,21 +9,3 @@
     border: 1px solid red;
   }
 
-  .leaflet-tooltip {
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    &::before {
-      display: none
-    }
-  }
-  
-  .leaflet-div-icon {
-    background: transparent;
-    border: none !important;
-    overflow: hidden;
-
-    img {
-      transform: translateY(-2px) scale(4);
-    }
-  }
