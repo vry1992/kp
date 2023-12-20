@@ -4,7 +4,8 @@ import { useForm } from '../../hooks/useForm';
 import { useValidation } from '../../hooks/useValidation';
 import { useFormik } from 'formik';
 import { FormField } from '../FormField';
-import { Accordion, Form } from 'react-bootstrap';
+import { Accordion, Col, Form, Row } from 'react-bootstrap';
+import './index.scss';
 
 const initialValues = Object.fromEntries(Object.keys(aircraftInfoFields).map((item) => [item, '']));
 
@@ -68,36 +69,42 @@ export const AircraftInfoForm = ({ onFormChange }) => {
     <div>
       <form onSubmit={handleSubmit}>
         <p>Оберіть тип:</p>
-        <Accordion>
-          {Object.entries(aircrafts).map(([key, planes]) => {
-            return (
-              <Accordion.Item eventKey={key} key={key}>
-                <Accordion.Header>
-                  {aircraftTypeMap[key]} <pre>{'     '}</pre>
-                  <i>{types[key] ? `(${types[key]?.map(({ label }) => label).join(', ')})` : ''}</i>
-                </Accordion.Header>
-                <Accordion.Body>
-                  {Object.values(planes).map(({ label, value }) => {
-                    return (
-                      <Form.Check // prettier-ignore
-                        key={value}
-                        type={'checkbox'}
-                        id={value}
-                        label={label}
-                        onChange={(event) => {
-                          onTypeSelect(key, event.target.id, event.target.labels[0].innerText);
-                        }}
-                      />
-                    );
-                  })}
-                </Accordion.Body>
-              </Accordion.Item>
-            );
-          })}
-        </Accordion>
-        <br />
-        {renderForm()}
+        <Row>
+          <Col xs={6}>
+            <Accordion className="aircraft-types">
+              {Object.entries(aircrafts).map(([key, planes]) => {
+                return (
+                  <Accordion.Item eventKey={key} key={key}>
+                    <Accordion.Header>
+                      {aircraftTypeMap[key]} <pre>{'     '}</pre>
+                      <i>
+                        {types[key] ? `(${types[key]?.map(({ label }) => label).join(', ')})` : ''}
+                      </i>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                      {Object.values(planes).map(({ label, value }) => {
+                        return (
+                          <Form.Check // prettier-ignore
+                            key={value}
+                            type={'checkbox'}
+                            id={value}
+                            label={label}
+                            onChange={(event) => {
+                              onTypeSelect(key, event.target.id, event.target.labels[0].innerText);
+                            }}
+                          />
+                        );
+                      })}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                );
+              })}
+            </Accordion>
+          </Col>
+          <Col xs={6}>{renderForm()}</Col>
+        </Row>
       </form>
+      <br />
     </div>
   );
 };
