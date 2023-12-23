@@ -1,15 +1,5 @@
-import { pelengReducer } from './peleng';
-import { flowSidebarReducer } from './flowSidebar';
-import { loaderReducer } from './loader';
-import { initialDataReducer } from './initialData';
-import { shipsReducer } from './ships';
-import { shipsFilterReducer } from './shipsFilter';
+import { shipsReducer as ships } from '../features/ships/store/shipsSlice';
+import { shipsDataReducer } from '../features/shipsData/store/shipsDataSlice';
+import { aircraftReducer } from '../features/aircraft/store/aircraftSlice';
 
-export {
-  pelengReducer,
-  flowSidebarReducer,
-  loaderReducer,
-  initialDataReducer,
-  shipsReducer,
-  shipsFilterReducer
-};
+export { ships, shipsDataReducer, aircraftReducer };

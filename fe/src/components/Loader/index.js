@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useSelector } from 'react-redux';
 import Spinner from 'react-bootstrap/Spinner';
-import { isLoading } from '../../selectors';
 import './index.scss';
+import { shipsDataListLoading } from '../../features/shipsData/store/shipsDataSelectors';
+import { useSelector } from 'react-redux';
+import { aircraftsLoaderSelector } from '../../features/aircraft/store/aircraftSelectors';
 
 const loaderRoot = document.getElementById('loader');
 const app = document.getElementById('root');
@@ -18,7 +19,10 @@ export function Loader({ isLocal = false, show = false }) {
 }
 
 export function LoaderPortal() {
-  const showLoader = useSelector(isLoading);
+  const shipsData = useSelector(shipsDataListLoading);
+  const aircrafts = useSelector(aircraftsLoaderSelector);
+  const showLoader =
+    Object.values(shipsData).some((bool) => bool) || Object.values(aircrafts).some((bool) => bool);
 
   useEffect(() => {
     if (showLoader) {

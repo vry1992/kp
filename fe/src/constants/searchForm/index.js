@@ -1,28 +1,28 @@
 export const searchFormFields = {
   dateFrom: {
     type: 'datetime-local',
-    placeholder: 'Дата та час від якої почати пошук',
-    label: 'Дата та час від якої почати пошук',
+    placeholder: 'Дата та час від',
+    label: 'Дата та час від',
     fieldName: 'dateFrom',
     columnWidth: 5
   },
   dateTo: {
     type: 'datetime-local',
-    placeholder: 'Дата та час до якої здійснювати пошук',
-    label: 'Дата та час до якої здійснювати пошук',
+    placeholder: 'Дата та час до',
+    label: 'Дата та час до',
     fieldName: 'dateTo',
     columnWidth: 5
-  },
-  shipNameList: {
-    type: 'select',
-    multiple: true,
-    placeholder: 'Оберіть назви кораблів',
-    label: 'Оберіть назви кораблів',
-    fieldName: 'shipNameList',
-    autoComplete: 'off',
-    columnWidth: 10,
-    options: []
   }
+  // shipNameList: {
+  //   type: 'select',
+  //   multiple: true,
+  //   placeholder: 'Оберіть назви кораблів',
+  //   label: 'Оберіть назви кораблів',
+  //   fieldName: 'shipNameList',
+  //   autoComplete: 'off',
+  //   columnWidth: 10,
+  //   options: []
+  // }
   // frequency: {
   //   type: 'text',
   //   placeholder: 'Частота на якій спостерігалось, наприклад 0000 або 123.456',

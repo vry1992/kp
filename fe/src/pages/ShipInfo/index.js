@@ -1,101 +1,136 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SearchShips } from '../../components/SearchShips';
+import React, { useEffect, useState } from 'react';
 import { Headline } from '../../components/Headline';
-import { Col, ListGroup, Row, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { getSearchShipsList, getUnitNames } from '../../selectors';
-import { setSearchShipsList } from '../../reducers/ships';
-import { RefuseAddNewShipModal } from '../../components/RefuseAddNewSipModal';
-import { routesConfig } from '../../routing';
 import './index.scss';
+import { CustomButton } from '../../components/CustomButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { getShipsThunk } from '../../features/ships/store/shipsThunk';
+import { shipsListSelector } from '../../features/ships/store/shipsSelectors';
+import { ShipInfoForm } from '../../components/ShipInfoForm';
+import { AddShipMap } from '../../components/AddShipMap';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import { postShipsDataThunk } from '../../features/shipsData/store/shipsDataThunk';
 
 export function ShipInfo() {
-  const dispatch = useDispatch();
   const location = useLocation();
-  const selectedShip = location.state ? location.state : null;
-  const searchShipsList = useSelector(getSearchShipsList);
-  const [selectedShipData, setSelectedShipData] = useState(selectedShip);
-  const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
-  const [addKnownCheckbox, setAddKnownCheckbox] = useState(false);
-  const unitNames = useSelector(getUnitNames);
   const navigate = useNavigate();
-
-  function shipsListClickHandler(shipData) {
-    setSelectedShipData(shipData);
-  }
-
-  function resetShipList() {
-    setSelectedShipData(null);
-    dispatch(setSearchShipsList([]));
-  }
+  const dispatch = useDispatch();
+  const shipsList = useSelector(shipsListSelector);
+  const [shipSelectorData, setShipSelectorData] = useState({});
+  const [latLngState, setLatLng] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [dataToSubmit, setDataToSubmit] = useState({});
 
   useEffect(() => {
-    if (Object.keys(unitNames).length === 0) {
-      setIsRefuseModalOpen(true);
-    } else {
-      setIsRefuseModalOpen(false);
-    }
-  }, [unitNames]);
+    dispatch(getShipsThunk());
+  }, []);
 
-  const navigateToAddUnitPage = () => {
-    setIsRefuseModalOpen(false);
-    navigate(routesConfig.addNewShip.path);
+  useEffect(() => {
+    if (location.state?.lat && location.state?.lng) {
+      setLatLng({
+        lat: location.state?.lat,
+        lng: location.state?.lng
+      });
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    const grouped = shipsList.reduce((acc, curr) => {
+      const existed = acc[curr.ship_type] || [
+        { ship_name: 'н/в', ship_id: uuidv4(), ship_type: curr.ship_type }
+      ];
+      return {
+        ...acc,
+        [curr.ship_type]: [...existed, curr]
+      };
+    }, {});
+    setShipSelectorData(grouped);
+  }, [shipsList]);
+
+  const onCreate = (latlng) => {
+    setLatLng(latlng);
   };
 
-  function renderShipsList() {
-    return (
-      <Row className="justify-content-md-center">
-        <Col xs={10}>
-          <ListGroup>
-            {searchShipsList.map(({ shipId, shipName }) => {
-              return (
-                <ListGroup.Item
-                  as="li"
-                  key={shipId}
-                  onClick={() => shipsListClickHandler({ shipId, shipName })}>
-                  {shipName}
-                </ListGroup.Item>
-              );
-            })}
-          </ListGroup>
-        </Col>
-      </Row>
-    );
-  }
+  const onEdit = (latlng) => {
+    setLatLng(latlng);
+  };
+
+  const onFormChange = (values, isReady) => {
+    isFormValid !== isReady && setIsFormValid(isReady);
+    setDataToSubmit(values);
+  };
+
+  const onSubmit = () => {
+    const { types, ...rest } = dataToSubmit;
+    const typesKeys = Object.entries(types);
+    const isUnknownType =
+      typesKeys.length > 1 ||
+      typesKeys[0][1].length > 1 ||
+      typesKeys.some(([, shipsSelected]) => {
+        return shipsSelected.some(({ label }) => label === 'н/в');
+      });
+    if (!isUnknownType) {
+      dispatch(
+        postShipsDataThunk({
+          shipId: typesKeys[0][1][0].value,
+          discoverTimestamp: rest.date,
+          personName: rest.personName,
+          shipCallsign: rest.shipCallsign,
+          companionCallsign: rest.companionCallsign,
+          frequency: rest.frequency,
+          peleng: rest.peleng,
+          additionalInformation: rest.additionalInformation,
+          latitude: latLngState.lat,
+          longitude: latLngState.lng
+        })
+      );
+    } else {
+      dispatch(
+        postShipsDataThunk({
+          discoverTimestamp: rest.date,
+          personName: rest.personName,
+          shipCallsign: rest.shipCallsign,
+          companionCallsign: rest.companionCallsign,
+          frequency: rest.frequency,
+          peleng: rest.peleng,
+          additionalInformation: rest.additionalInformation,
+          latitude: latLngState.lat,
+          longitude: latLngState.lng,
+          data: JSON.stringify(
+            typesKeys
+              .map(([type, entr]) => entr.map((i) => ({ ...i, type })))
+              .flat()
+              .map(({ label, type, value }) => {
+                return {
+                  shipId: label !== 'н/в' ? value : '',
+                  shipName: label,
+                  type
+                };
+              })
+          )
+        })
+      );
+    }
+
+    navigate('/map');
+  };
 
   return (
-    <div className="ship-info">
-      <Headline text="Додати інформацію про виявлений корабель" />
-
-      <Form.Check
-        type="switch"
-        id="custom-switch"
-        label="Додати НЕ визначений корабель / кораблі?"
-        checked={addKnownCheckbox}
-        onChange={() => {
-          setAddKnownCheckbox(!addKnownCheckbox);
-        }}
-        style={{
-          padding: '20px',
-          color: 'red'
-        }}
+    <div>
+      <Headline text={'Введіть інформацію про виявлений корабель'} />
+      <ShipInfoForm onFormChange={onFormChange} shipsListData={shipSelectorData} />
+      <AddShipMap
+        onCreate={onCreate}
+        onEdit={onEdit}
+        lat={latLngState?.lat}
+        lng={latLngState?.lng}
       />
 
-      <SearchShips
-        selectedShipData={selectedShipData}
-        resetShipList={resetShipList}
-        addUnknown={addKnownCheckbox}
+      <CustomButton
+        text={'Зберегти'}
+        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+        onClick={onSubmit}
       />
-      {!addKnownCheckbox && !selectedShipData?.shipId && renderShipsList()}
-      {iseRefuseModalOpen && (
-        <RefuseAddNewShipModal
-          show={iseRefuseModalOpen}
-          onClick={navigateToAddUnitPage}
-          text="Немає жодного доданого корабля."
-          buttonText="Додати корабель"
-        />
-      )}
     </div>
   );
 }

@@ -15,10 +15,6 @@ export const sidebarLinks = {
     type: 'navigation',
     label: 'Додати інформацію про виявлений літак'
   },
-  search: {
-    type: 'navigation',
-    label: 'Пошук'
-  },
   dutyInfo: {
     type: 'navigation',
     label: 'Інформація про чергового'

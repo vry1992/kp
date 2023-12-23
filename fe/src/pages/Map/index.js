@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Headline } from '../../components/Headline';
 import { InteractiveMap } from '../../components/InteractiveMap';
 import { DUTY_INFO_STORAGE_KEY } from '../DutyInfo';
@@ -42,8 +41,6 @@ const getDateOfFilters = (filters, dutyInfo) => {
   };
 };
 export function Map() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const [sign, setSign] = useState(null);
   const [settings, setSettings] = useState({
     showLast: false
@@ -51,19 +48,29 @@ export function Map() {
   const [initFilters, setInitFilters] = useState(null);
 
   useEffect(() => {
-    const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
-    const dutyData = storageData ? JSON.parse(storageData) : null;
-    setSign(dutyData);
+    const listener = () => {
+      const storageData = localStorage.getItem(DUTY_INFO_STORAGE_KEY);
+      const dutyData = storageData ? JSON.parse(storageData) : null;
+      setSign(dutyData);
+    };
+    window.addEventListener('storage', listener);
+    return () => {
+      window.removeEventListener('storage', listener);
+    };
   }, []);
 
   useEffect(() => {
-    const filters = localStorage.getItem(SEARCH_KEY);
-    if (filters) {
-      setInitFilters(JSON.parse(filters));
-    }
+    const listener = () => {
+      const filters = localStorage.getItem(SEARCH_KEY);
+      if (filters) {
+        setInitFilters(JSON.parse(filters));
+      }
+    };
+    window.addEventListener('storage', listener);
+    return () => {
+      window.removeEventListener('storage', listener);
+    };
   }, []);
-
-  const mapData = location.state || [];
 
   return (
     <div className="map">
@@ -84,7 +91,6 @@ export function Map() {
           }`}
           tagName={'b'}
           style={{ display: 'block', fontSize: '20px', cursor: 'pointer' }}
-          onClick={() => navigate('/search')}
         />
       </div>
 
@@ -103,7 +109,6 @@ export function Map() {
       <InteractiveMap
         width={window.innerWidth * 0.8}
         height={window.innerHeight * 0.5}
-        data={mapData}
         settings={settings}
       />
       {sign ? (

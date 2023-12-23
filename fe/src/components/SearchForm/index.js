@@ -5,15 +5,9 @@ import { FormField } from '../FormField';
 import { SEARCH_KEY, searchFormFields } from '../../constants/searchForm';
 import { useForm } from '../../hooks/useForm';
 import { useValidation } from '../../hooks/useValidation';
-import { CustomButton } from '../CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { filterShips } from '../../actions/ships';
 import { getSelectOptionsFromArray, getShipsSelectOptionsFromArray } from '../../helpers';
-import {
-  getShipNamesOptions,
-  getCallSignsOptions,
-  getPersonsWhoAddedOptions
-} from '../../selectors';
+import { filterShipsDataThunk } from '../../features/shipsData/store/shipsDataThunk';
 
 const defaultDateFrom = new Date(
   new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).setHours(0, 0, 0, 0)
@@ -30,12 +24,12 @@ const initialValues = {
   dateTo: defaultDateTo
 };
 
-export function SearchForm({ setIsLoading }) {
+export function SearchForm() {
   const { validationSchema } = useValidation(searchFormFields);
   const { checkIsFormValid } = useForm(searchFormFields);
-  const shipNamesOptions = useSelector(getShipNamesOptions);
-  const callSignsOptions = useSelector(getCallSignsOptions);
-  const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
+  const shipNamesOptions = useSelector(() => []);
+  const callSignsOptions = useSelector(() => []);
+  const personsWhoAddedOptions = useSelector(() => []);
   const dispatch = useDispatch();
 
   const {
@@ -70,33 +64,27 @@ export function SearchForm({ setIsLoading }) {
 
   useEffect(() => {
     localStorage.setItem(SEARCH_KEY, JSON.stringify(values));
+    window.dispatchEvent(new Event('storage'));
     onSubmit(values);
   }, [values]);
 
   function onSubmit(values) {
-    setIsLoading(true);
     const { frequency, personNameList, shipNameList, shipCallsignList, dateFrom, dateTo } = values;
     const dataToSubmit = {
       ...(frequency && { frequency }),
       personNameList: personNameList ? personNameList.map(({ label }) => label) : [],
       shipNameList: shipNameList ? shipNameList.map(({ key }) => key) : [],
       shipCallsignList: shipCallsignList ? shipCallsignList.map(({ label }) => label) : [],
-      dateTo: new Date(dateTo).getTime(),
-      dateFrom: new Date(dateFrom).getTime()
+      dateTo: new Date(dateTo).toISOString(),
+      dateFrom: new Date(dateFrom).toISOString()
     };
 
-    dispatch(
-      filterShips({
-        data: dataToSubmit,
-        onSuccess: () => setIsLoading(false),
-        onError: () => setIsLoading(false)
-      })
-    );
+    dispatch(filterShipsDataThunk(dataToSubmit));
   }
 
   const getMultyselectOptions = useCallback(
     (name) => {
-      if (name === searchFormFields.shipNameList.fieldName) {
+      if (name === searchFormFields.shipNameList?.fieldName) {
         return getShipsSelectOptionsFromArray(shipNamesOptions || []);
       } else if (name === searchFormFields.shipCallsignList?.fieldName)
         return getSelectOptionsFromArray(callSignsOptions || []);
@@ -107,9 +95,9 @@ export function SearchForm({ setIsLoading }) {
   );
 
   const renderField = useCallback(
-    ({ name, onChange, columnWidth = 10, ...restProps }) => {
+    ({ name, onChange, ...restProps }) => {
       return (
-        <Col xs={columnWidth} key={name}>
+        <Col xs={12} key={name}>
           <FormField
             name={name}
             onChange={onChange}
@@ -153,11 +141,6 @@ export function SearchForm({ setIsLoading }) {
   return (
     <form onSubmit={handleSubmit}>
       <Row className="justify-content-md-center">{renderSearchForm()}</Row>
-      <Row className="justify-content-md-center">
-        <Col xs={10}>
-          <CustomButton text="Пошук" type="submit" />
-        </Col>
-      </Row>
     </form>
   );
 }

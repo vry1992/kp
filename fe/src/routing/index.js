@@ -4,13 +4,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AddNewUnit } from '../pages/AddNewUnit';
 import { Map } from '../pages/Map';
-import { Search } from '../pages/Search';
 import { SuccessAddedShip } from '../pages/SuccessAddedShip';
 import { SuccessAddedUnit } from '../pages/SuccessAddedUnit';
 import { ShipInfo } from '../pages/ShipInfo';
 import { EditShipInfo } from '../pages/EditShipInfo';
 import { DutyInfo } from '../pages/DutyInfo';
 import { AircraftInfo } from '../pages/AircraftInfo';
+import { EditAircraftInfo } from '../pages/EditAircraftInfo';
 
 export const routesConfig = {
   addNewShip: {
@@ -33,9 +33,9 @@ export const routesConfig = {
     path: '/ship-info/edit/:id',
     page: EditShipInfo
   },
-  search: {
-    path: '/search',
-    page: Search
+  editAircraftInfo: {
+    path: '/aircraft-info/edit/:id',
+    page: EditAircraftInfo
   },
   successAddedShip: {
     path: '/success-added-ship',

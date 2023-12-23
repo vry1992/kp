@@ -1,13 +1,46 @@
 import React from 'react';
-import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  FeatureGroup,
+  Polygon,
+  Marker,
+  Tooltip,
+  Polyline
+} from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
-export const AddAircraftMap = ({ onCreate }) => {
+const icon = new L.DivIcon({
+  html: `
+  <svg
+    width="24"
+    height="40"
+    viewBox="0 0 100 100"
+    version="1.1"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style="transform:rotate(180deg)"
+  >
+    <path d="M0 0 L50 100 L100 0 Z" fill="red"></path>
+  </svg>`,
+  iconSize: [35, 35],
+  className: 'leaflet-div-icon'
+});
+
+export const AddAircraftMap = ({
+  onCreate,
+  onEdit,
+  data,
+  currLatLng,
+  currPolygone,
+  currPolyline
+}) => {
   return (
     <MapContainer
-      center={[46.0, 34.0]}
+      center={[data?.latitude || 46.0, data?.longitude || 34.0]}
       zoom={7}
       cli
       maxZoom={11}
@@ -24,37 +57,102 @@ export const AddAircraftMap = ({ onCreate }) => {
       <FeatureGroup>
         <EditControl
           position="topright"
-          onEdited={(e) => console.log('EDIT', e)}
-          onCreated={(e) => onCreate(e.layer.editing.latlngs[0])}
-          onDeleted={(e) => console.log('Delete', e)}
+          onEditMove={(e) => {
+            onEdit(e.layer._latlng || e.layer._latlngs);
+          }}
+          onCreated={(e) => {
+            onCreate(e.layer._latlng || e.layer._latlngs);
+          }}
+          edit={{
+            remove: false
+          }}
           draw={{
             rectangle: false,
             circle: false,
             circlemarker: false,
-            marker: true,
-            polyline: {
-              shapeOptions: {
-                color: 'red',
-                stroke: true,
-                fill: false,
-                dashArray: [10, 20],
-                dashOffset: 10,
-                opacity: 1
-              }
-            },
-            polygon: {
-              showArea: false,
-              shapeOptions: {
-                color: 'red',
-                stroke: true,
-                fill: false,
-                dashArray: [10, 20],
-                dashOffset: 10,
-                opacity: 1
-              }
-            }
+            marker: { icon },
+            polyline:
+              currPolyline?.length || currPolygone?.length
+                ? false
+                : {
+                    shapeOptions: {
+                      color: 'red',
+                      stroke: true,
+                      fill: false,
+                      dashArray: [10, 20],
+                      dashOffset: 10,
+                      opacity: 1
+                    }
+                  },
+            polygon:
+              currPolygone?.length || currPolyline?.length
+                ? false
+                : {
+                    showArea: false,
+                    shapeOptions: {
+                      color: 'red',
+                      stroke: true,
+                      fill: false,
+                      dashArray: [10, 20],
+                      dashOffset: 10,
+                      opacity: 1
+                    }
+                  }
           }}
         />
+
+        {(data && Object.keys(data).length) || (currLatLng?.lat && currLatLng?.lng) ? (
+          <>
+            <Marker
+              position={[currLatLng.lat || data.latitude, currLatLng.lng || data.longitude]}
+              icon={icon}>
+              <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+                <strong>
+                  {Object.values(data.data)
+                    .flat()
+                    .map(({ label }) => label)
+                    .join(' / ')}
+                </strong>
+              </Tooltip>
+            </Marker>
+            {data.polyline ? (
+              <Polyline
+                pathOptions={{
+                  color: 'red',
+                  dashArray: [5, 10],
+                  fill: false
+                }}
+                positions={data.polyline.map(({ lat, lng }) => {
+                  return [lat, lng];
+                })}
+              />
+            ) : null}
+            {!currPolygone?.[0]?.length && data?.polygone?.[0] ? (
+              <Polygon
+                pathOptions={{
+                  color: 'red',
+                  dashArray: [5, 10],
+                  fill: false
+                }}
+                positions={data?.polygone[0].map(({ lat, lng }) => {
+                  return [lat, lng];
+                })}
+              />
+            ) : null}
+            {currPolygone?.[0]?.length ? (
+              <Polygon
+                pathOptions={{
+                  color: 'red',
+                  dashArray: [5, 10],
+                  fill: true
+                }}
+                positions={currPolygone[0].map(({ lat, lng }) => {
+                  return [lat, lng];
+                })}
+              />
+            ) : null}
+          </>
+        ) : null}
       </FeatureGroup>
     </MapContainer>
   );

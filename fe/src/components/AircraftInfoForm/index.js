@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import { FormField } from '../FormField';
 import { Accordion, Col, Form, Row } from 'react-bootstrap';
 import './index.scss';
+import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
 
 const initialValues = Object.fromEntries(Object.keys(aircraftInfoFields).map((item) => [item, '']));
 
@@ -13,14 +14,40 @@ export const AircraftInfoForm = ({ onFormChange }) => {
   const { checkIsFormValid, isFormValid } = useForm(aircraftInfoFields);
   const { validationSchema } = useValidation(aircraftInfoFields);
   const [types, setTypes] = useState({});
-  const { values, handleChange, handleSubmit, errors, touched, handleBlur, setFieldValue } =
-    useFormik({
-      initialValues,
-      validationSchema,
-      onSubmit: (data) => {
-        console.log(data);
-      }
+  const {
+    values,
+    setValues,
+    handleChange,
+    handleSubmit,
+    errors,
+    touched,
+    handleBlur,
+    setFieldValue
+  } = useFormik({
+    initialValues,
+    validationSchema
+  });
+
+  useEffect(() => {
+    const isReady = isFormValid && !!Object.keys(types).length;
+    onFormChange(
+      {
+        ...values,
+        types
+      },
+      isReady
+    );
+  }, [types, values, isFormValid]);
+
+  useEffect(() => {
+    const dutyInfo = JSON.parse(localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({}));
+    const personName = dutyInfo.dutyManFullName || '';
+    setValues({
+      personName,
+      date: new Date().toISOString(),
+      flyAmount: 1
     });
+  }, []);
 
   useEffect(() => {
     checkIsFormValid(errors, values);
@@ -44,26 +71,26 @@ export const AircraftInfoForm = ({ onFormChange }) => {
     ));
   };
 
-  const onTypeSelect = (key, value, label) => {
-    setTypes((prev) => {
-      const prevWithKey = prev[key] || [];
-      return {
-        ...prev,
-        [key]: [...prevWithKey, { label, value }]
-      };
-    });
+  const onTypeSelect = (key, value, label, checked) => {
+    if (checked) {
+      setTypes((prev) => {
+        const prevWithKey = prev[key] || [];
+        return {
+          ...prev,
+          [key]: [...prevWithKey, { label, value }]
+        };
+      });
+    } else {
+      const newTypesByKey = types[key].filter((item) => value !== item.value);
+      const newTypes = { ...types };
+      if (newTypesByKey.length) {
+        newTypes[key] = newTypesByKey;
+      } else {
+        delete newTypes[key];
+      }
+      setTypes(newTypes);
+    }
   };
-
-  useEffect(() => {
-    const isReady = isFormValid && !!Object.keys(types);
-    onFormChange(
-      {
-        ...values,
-        types
-      },
-      isReady
-    );
-  }, [types, values, isFormValid]);
 
   return (
     <div>
@@ -90,7 +117,12 @@ export const AircraftInfoForm = ({ onFormChange }) => {
                             id={value}
                             label={label}
                             onChange={(event) => {
-                              onTypeSelect(key, event.target.id, event.target.labels[0].innerText);
+                              onTypeSelect(
+                                key,
+                                event.target.id,
+                                event.target.labels[0].innerText,
+                                event.target.checked
+                              );
                             }}
                           />
                         );

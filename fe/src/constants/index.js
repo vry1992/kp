@@ -231,3 +231,7 @@ export const shipTypes = {
     icon: 'srzk'
   }
 };
+
+export const shipTypeMap = Object.fromEntries(
+  Object.values(shipTypes).map(({ type, short }) => [type, short])
+);

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import { newUnitFormConfig } from '../../constants/newUnitForm';
 import { FormField } from '../FormField';
 import { CustomButton } from '../CustomButton';
 import { useValidation } from '../../hooks/useValidation';
 import { useForm } from '../../hooks/useForm';
 import { MandatoryFieldsNotification } from '../MandatoryFieldsNotification';
-import { postUnit } from '../../actions/newUnit';
 import { Modal } from '../Modal';
 import { Paragraph } from '../Paragraph';
 import { useNavigate } from 'react-router-dom';
 import { routesConfig } from '../../routing';
+import { UnitServices } from '../../features/units/services/UnitServices';
 
 const initialValues = Object.fromEntries(Object.keys(newUnitFormConfig).map((item) => [item, '']));
 
@@ -22,7 +21,6 @@ export function NewUnitForm() {
   const { checkIsFormValid, isFormValid } = useForm(newUnitFormConfig);
   const [errorModal, setErrorModal] = useState({ open: false, message: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
 
   const { values, handleChange, handleSubmit, errors, touched, handleBlur, resetForm } = useFormik({
     initialValues,
@@ -40,9 +38,14 @@ export function NewUnitForm() {
     setIsLoading(false);
   };
 
-  function onSubmit() {
+  async function onSubmit() {
     setIsLoading(true);
-    dispatch(postUnit(values, onSuccess, onError));
+    try {
+      await UnitServices.createNewUnit(values);
+      onSuccess();
+    } catch (error) {
+      onError();
+    }
   }
 
   useEffect(() => {
@@ -68,8 +71,13 @@ export function NewUnitForm() {
     resetForm(initialValues);
   };
 
-  const confirmSave = () => {
-    dispatch(postUnit({ ...values, conflictConfirmed: true }, onSuccess, onError));
+  const confirmSave = async () => {
+    try {
+      await UnitServices.createNewUnit({ ...values, conflictConfirmed: true });
+      onSuccess();
+    } catch (error) {
+      onError();
+    }
   };
 
   return (

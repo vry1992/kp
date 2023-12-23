@@ -1,13 +1,3 @@
-export const searchShipFormConfig = {
-  search: {
-    type: 'text',
-    placeholder: 'Введіть назву корабля',
-    label: 'Введіть назву корабля',
-    fieldName: 'search',
-    autoComplete: 'off'
-  }
-};
-
 export const shipInfoFields = {
   date: {
     type: 'datetime-local',
@@ -15,56 +5,6 @@ export const shipInfoFields = {
     label: 'Виберіть дату та час',
     fieldName: 'date',
     required: true
-  },
-  latitudeDegs: {
-    type: 'number',
-    placeholder: 'Введіть градуси північної широти',
-    label: 'Градуси північної широти',
-    fieldName: 'latitudeDegs',
-    required: false,
-    min: -90,
-    max: 90,
-    columnWidth: 5
-  },
-  latitudeMinutes: {
-    type: 'number',
-    placeholder: 'Введіть мінути північної широти',
-    label: 'Мінути північної широти',
-    fieldName: 'latitudeMinutes',
-    required: false,
-    min: 0,
-    max: 60,
-    columnWidth: 5
-  },
-  longitudeDegs: {
-    type: 'number',
-    placeholder: 'Введіть градуси східної довготи',
-    label: 'Градуси східної довготи',
-    fieldName: 'longitudeDegs',
-    required: false,
-    min: 0,
-    max: 180,
-    columnWidth: 5
-  },
-  longitudeMinutes: {
-    type: 'number',
-    placeholder: 'Введіть мінути східної довготи',
-    label: 'Мінути східної довготи',
-    fieldName: 'longitudeMinutes',
-    required: false,
-    min: 0,
-    max: 60,
-    columnWidth: 5
-  },
-  peleng: {
-    type: 'number',
-    placeholder: 'Введіть пеленг від 0 до 360',
-    label: 'Пеленг',
-    fieldName: 'peleng',
-    required: false,
-    min: 0,
-    max: 360,
-    columnWidth: 5
   },
   shipCallsign: {
     type: 'text',
@@ -112,46 +52,6 @@ export const editShipInfoFields = {
     placeholder: 'Виберіть дату та час',
     label: 'Виберіть дату та час',
     fieldName: 'date'
-  },
-  latitudeDegs: {
-    type: 'number',
-    placeholder: 'Введіть градуси північної широти',
-    label: 'Градуси північної широти',
-    fieldName: 'latitudeDegs',
-    required: false,
-    min: -90,
-    max: 90,
-    columnWidth: 5
-  },
-  latitudeMinutes: {
-    type: 'number',
-    placeholder: 'Введіть мінути північної широти',
-    label: 'Мінути північної широти',
-    fieldName: 'latitudeMinutes',
-    required: false,
-    min: 0,
-    max: 60,
-    columnWidth: 5
-  },
-  longitudeDegs: {
-    type: 'number',
-    placeholder: 'Введіть градуси східної довготи',
-    label: 'Градуси східної довготи',
-    fieldName: 'longitudeDegs',
-    required: false,
-    min: 0,
-    max: 180,
-    columnWidth: 5
-  },
-  longitudeMinutes: {
-    type: 'number',
-    placeholder: 'Введіть мінути східної довготи',
-    label: 'Мінути східної довготи',
-    fieldName: 'longitudeMinutes',
-    required: false,
-    min: 0,
-    max: 60,
-    columnWidth: 5
   },
   peleng: {
     type: 'number',

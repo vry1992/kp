@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
@@ -9,23 +8,23 @@ import { CustomButton } from '../CustomButton';
 import { useValidation } from '../../hooks/useValidation';
 import { useForm } from '../../hooks/useForm';
 import { MandatoryFieldsNotification } from '../MandatoryFieldsNotification';
-import { getUnitNames } from '../../selectors';
-import { postShip } from '../../actions/ships';
 import { Modal } from '../Modal';
 import { Paragraph } from '../Paragraph';
 import { routesConfig } from '../../routing';
+import { UnitServices } from '../../features/units/services/UnitServices';
+import { ShipService } from '../../features/ships/services/ShipsService';
 
 const initialValues = Object.fromEntries(Object.keys(newShipFormConfig).map((item) => [item, '']));
 
 export function NewShipForm() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const unitNames = useSelector(getUnitNames);
   const { validationSchema } = useValidation(newShipFormConfig);
   const { checkIsFormValid, isFormValid } = useForm(newShipFormConfig);
   const [errorModal, setErrorModal] = useState({ open: false, message: '' });
   const [isLoading, setIsLoading] = useState(false);
+
+  const [unitsList, setUnitsList] = useState([]);
 
   const { values, handleChange, handleSubmit, errors, touched, handleBlur, resetForm } = useFormik({
     initialValues,
@@ -33,28 +32,32 @@ export function NewShipForm() {
     onSubmit: onSubmit
   });
 
-  const onSuccess = () => {
-    setIsLoading(false);
-    navigate(routesConfig.successAddedShip.path, { state: values });
-  };
-
-  const onError = (message) => {
-    setErrorModal({ open: true, message });
-    setIsLoading(false);
-  };
-
-  function onSubmit() {
+  async function onSubmit() {
     setIsLoading(true);
-    dispatch(postShip(values, onSuccess, onError));
+    try {
+      await ShipService.apiPostShip(values);
+      navigate(routesConfig.successAddedShip.path, { state: values });
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   }
 
   function getOptions(name, props) {
     if (name === newShipFormConfig.shipUnit.fieldName) {
-      return unitNames.map(({ unitId, unitName }) => ({ key: unitId, label: unitName }));
+      return unitsList.map(({ unitId, unitName }) => ({ key: unitId, label: unitName }));
     } else if (name === newShipFormConfig.shipType.fieldName) {
       return props.options;
     }
   }
+
+  useEffect(() => {
+    const getUnits = async () => {
+      const units = await UnitServices.getUnits();
+      setUnitsList(units);
+    };
+    getUnits();
+  }, []);
 
   useEffect(() => {
     checkIsFormValid(errors, values);

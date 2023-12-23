@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { Headline } from '../../components/Headline';
 import { NewShipForm } from '../../components/NewShipForm';
 import { RefuseAddNewShipModal } from '../../components/RefuseAddNewSipModal';
 import { routesConfig } from '../../routing';
-import { getUnitNames } from '../../selectors';
+import { UnitServices } from '../../features/units/services/UnitServices';
 
 export function AddNewShip() {
   const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
   const navigate = useNavigate();
-  const unitNames = useSelector(getUnitNames);
 
   const navigateToAddUnitPage = () => {
     setIsRefuseModalOpen(false);
@@ -18,12 +16,16 @@ export function AddNewShip() {
   };
 
   useEffect(() => {
-    if (Object.keys(unitNames).length === 0) {
-      setIsRefuseModalOpen(true);
-    } else {
-      setIsRefuseModalOpen(false);
-    }
-  }, [unitNames]);
+    const getUnits = async () => {
+      const units = await UnitServices.getUnits();
+      if (!units.length) {
+        setIsRefuseModalOpen(true);
+      } else {
+        setIsRefuseModalOpen(false);
+      }
+    };
+    getUnits();
+  }, []);
 
   return (
     <div className="add-new-ship">
