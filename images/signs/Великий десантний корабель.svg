@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 25.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Шар_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 595.28 841.89" style="enable-background:new 0 0 595.28 841.89;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#E30613;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
-	.st1{font-family:'MyriadPro-Regular';}
-	.st2{font-size:40px;}
-	.st3{font-size:30px;}
-</style>
-<rect x="247.64" y="361.68" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -202.508 330.4528)" class="st0" width="100" height="96"/>
-<text transform="matrix(0.9793 0 0 1 278.7384 421.8323)" class="st1 st2">LS</text>
-<text transform="matrix(1 0 0 1 287.8578 449.3615)" class="st1 st3">Н</text>
+<?xml version="1.0"?>
+<svg width="595.28" height="841.89" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" enable-background="new 0 0 595.28 841.89" version="1.1" xml:space="preserve">
+ <style type="text/css">.st0{fill:#E30613;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st1{font-family:&#x27;MyriadPro-Regular&#x27;;}
+	.st2{font-size:35px;}</style>
+ <!-- <text transform="matrix(0.9793 0 0 1 267.2884 415.8323)" class="st1 st2">АКА</text> -->
+ <g class="layer">
+  <title>Layer 1</title>
+  <path d="m129.57,229.46l119,0l0,113.6l-59.5,28.4l-59.5,-28.4l0,-113.6z" fill="#ff0000" id="svg_2" transform="rotate(-180 189.074 300.462)"/>
+  <line fill="none" id="svg_3" x1="286.22" x2="287.22" y1="252.61" y2="347.61"/>
+  <line fill="none" id="svg_4" opacity="0.5" x1="287.22" x2="287.22" y1="347.61" y2="347.61"/>
+ </g>
 </svg>
