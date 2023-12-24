@@ -28,8 +28,6 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
     validationSchema
   });
 
-  console.log(initData);
-
   useEffect(() => {
     const isReady = isFormValid && !!Object.keys(types).length;
     onFormChange(
@@ -40,16 +38,6 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
       isReady
     );
   }, [types, values, isFormValid]);
-
-  useEffect(() => {
-    const dutyInfo = JSON.parse(localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({}));
-    const personName = dutyInfo.dutyManFullName || '';
-    setValues({
-      personName,
-      date: new Date().toISOString(),
-      flyAmount: 1
-    });
-  }, []);
 
   useEffect(() => {
     checkIsFormValid(errors, values);
@@ -78,6 +66,17 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
       });
     }
   }, [initData]);
+
+  useEffect(() => {
+    const dutyInfo = JSON.parse(localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({}));
+    const personName = dutyInfo.dutyManFullName || '';
+
+    setValues({
+      personName,
+      date: new Date().toISOString(),
+      flyAmount: 1
+    });
+  }, []);
 
   useEffect(() => {
     if (initData && !Object.keys(initData).length) return;

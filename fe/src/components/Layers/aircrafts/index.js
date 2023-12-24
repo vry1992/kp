@@ -137,6 +137,7 @@ export const AircraftLayer = () => {
   );
 
   const onCreateNew = () => {
+    console.log('draggedItem.current', draggedItem.current);
     navigate(`/aircraft`, {
       state: draggedItem.current
     });

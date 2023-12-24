@@ -17,18 +17,6 @@ export const AircraftInfo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.state) {
-      setLatLng({
-        lat: location.state.lat,
-        lng: location.state.lng
-      });
-
-      // setPolygone(location.state.polygone);
-      // setPolyline(location.state.polyline);
-    }
-  }, [location.state]);
-
   const onCreate = (latlng) => {
     if (Array.isArray(latlng)) {
       if (Array.isArray(latlng[0])) {
@@ -70,6 +58,16 @@ export const AircraftInfo = () => {
 
     navigate('/map');
   };
+
+  useEffect(() => {
+    console.log(location.state);
+    if (location.state) {
+      setLatLng({
+        lat: location.state.lat || location.state.latitude,
+        lng: location.state.lng || location.state.longitude
+      });
+    }
+  }, [location.state]);
 
   return (
     <div>

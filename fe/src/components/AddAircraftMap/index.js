@@ -40,8 +40,11 @@ export const AddAircraftMap = ({
 }) => {
   return (
     <MapContainer
-      center={[data?.latitude || 46.0, data?.longitude || 34.0]}
-      zoom={7}
+      center={[
+        currLatLng?.lat || data?.latitude || 45.0,
+        currLatLng?.lng || data?.longitude || 34.0
+      ]}
+      zoom={5}
       cli
       maxZoom={11}
       minZoom={5}
