@@ -32,7 +32,7 @@ export function ShipInfo() {
         lng: location.state?.lng
       });
     }
-  }, [location.state]);
+  }, [location]);
 
   useEffect(() => {
     const grouped = shipsList.reduce((acc, curr) => {
@@ -115,10 +115,16 @@ export function ShipInfo() {
     navigate('/map');
   };
 
+  console.log(location.state);
+
   return (
     <div>
       <Headline text={'Введіть інформацію про виявлений корабель'} />
-      <ShipInfoForm onFormChange={onFormChange} shipsListData={shipSelectorData} />
+      <ShipInfoForm
+        onFormChange={onFormChange}
+        shipsListData={shipSelectorData}
+        initData={location.state}
+      />
       <AddShipMap
         onCreate={onCreate}
         onEdit={onEdit}

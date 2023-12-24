@@ -26,10 +26,7 @@ export const ShipInfoForm = ({ onFormChange, shipsListData }) => {
     setFieldValue
   } = useFormik({
     initialValues,
-    validationSchema,
-    onSubmit: (data) => {
-      console.log(data);
-    }
+    validationSchema
   });
 
   useEffect(() => {
@@ -118,6 +115,11 @@ export const ShipInfoForm = ({ onFormChange, shipsListData }) => {
                             type={'checkbox'}
                             id={ship_id}
                             label={ship_name}
+                            checked={
+                              !!types[ship_type]?.find(
+                                (item) => item.label === ship_name || item.value === ship_id
+                              )
+                            }
                             onChange={(event) => {
                               const { id, labels, checked } = event.target;
                               onTypeSelect(ship_type, id, labels[0].innerText, checked);

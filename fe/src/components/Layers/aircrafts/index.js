@@ -105,17 +105,18 @@ export const AircraftLayer = () => {
   };
 
   const submitUpdatedPosition = async (data) => {
-    await ShipsDataService.editShipData(data);
+    await AircraftService.patchData(data);
     fetchData();
   };
 
   const onMoveCurrentPress = () => {
     if (draggedItem.current) {
-      const { latitude, longitude, dataId } = draggedItem.current;
+      const { latitude, longitude, id } = draggedItem.current;
       submitUpdatedPosition({
+        ...draggedItem.current,
         latitude,
         longitude,
-        id: dataId
+        id
       });
       setUpdateOrCreatePopup(false);
     }

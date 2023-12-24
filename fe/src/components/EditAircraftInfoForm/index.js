@@ -31,7 +31,6 @@ export const EditAircraftInfoForm = ({ onFormChange, initData }) => {
   });
 
   useEffect(() => {
-    console.log(errors);
     checkIsFormValid(errors, values);
   }, [values, errors]);
 

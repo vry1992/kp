@@ -38,7 +38,6 @@ export const shipsDataSlice = createSlice({
       };
     });
     builder.addCase(filterShipsDataThunk.pending, (state, action) => {
-      console.log(action);
       state.loading = {
         ...state.loading,
         [action.type.replace('/pending', '')]: true

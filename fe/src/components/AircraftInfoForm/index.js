@@ -10,7 +10,7 @@ import { DUTY_INFO_STORAGE_KEY } from '../../pages/DutyInfo';
 
 const initialValues = Object.fromEntries(Object.keys(aircraftInfoFields).map((item) => [item, '']));
 
-export const AircraftInfoForm = ({ onFormChange }) => {
+export const AircraftInfoForm = ({ onFormChange, initData }) => {
   const { checkIsFormValid, isFormValid } = useForm(aircraftInfoFields);
   const { validationSchema } = useValidation(aircraftInfoFields);
   const [types, setTypes] = useState({});
@@ -56,6 +56,39 @@ export const AircraftInfoForm = ({ onFormChange }) => {
   function onChangeDate({ target: { name, value } }) {
     setFieldValue(name, value);
   }
+
+  useEffect(() => {
+    if (Object.keys(initData).length) {
+      const dutyInfo = JSON.parse(
+        localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({})
+      );
+      const personName = dutyInfo.dutyManFullName || '';
+      setValues({
+        date: initData.discover_timestamp_utc,
+        peleng: initData.peleng || '',
+        callsign: initData.callsign || '',
+        companionCallsign: initData.companion_callsign || '',
+        frequency: initData.frequency || '',
+        additionalInformation: initData.additional_information || '',
+        personName: initData.person_who_added || '',
+        personEditName: personName,
+        flyAmount: initData.flyAmount
+      });
+    }
+  }, [initData]);
+
+  useEffect(() => {
+    if (!Object.keys(initData).length) return;
+    const { data } = initData;
+    const grouped = Object.entries(data).reduce((acc, [key, planes]) => {
+      const existed = acc[key] || [];
+      return {
+        ...acc,
+        [key]: [...existed, ...planes]
+      };
+    }, {});
+    setTypes(grouped);
+  }, [initData]);
 
   const renderForm = () => {
     return Object.entries(aircraftInfoFields).map(([name, fieldProps]) => (

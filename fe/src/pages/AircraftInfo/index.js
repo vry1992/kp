@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import { AddAircraftMap } from '../../components/AddAircraftMap';
@@ -6,7 +6,7 @@ import { AircraftInfoForm } from '../../components/AircraftInfoForm';
 import { Headline } from '../../components/Headline';
 import { CustomButton } from '../../components/CustomButton';
 import { AircraftService } from '../../features/aircraft/services/AircraftService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const AircraftInfo = () => {
   const [latLngState, setLatLng] = useState({});
@@ -15,6 +15,19 @@ export const AircraftInfo = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [dataToSubmit, setDataToSubmit] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state) {
+      setLatLng({
+        lat: location.state.latitude,
+        lng: location.state.longitude
+      });
+
+      // setPolygone(location.state.polygone);
+      // setPolyline(location.state.polyline);
+    }
+  }, [location.state]);
 
   const onCreate = (latlng) => {
     if (Array.isArray(latlng)) {
@@ -61,12 +74,14 @@ export const AircraftInfo = () => {
   return (
     <div>
       <Headline text={'Введіть інформацію про виявлений літак'} />
-      <AircraftInfoForm onFormChange={onFormChange} />
+      <AircraftInfoForm onFormChange={onFormChange} initData={location.state} />
       <AddAircraftMap
         onCreate={onCreate}
         onEdit={onEdit}
+        currLatLng={latLngState}
         currPolygone={polygone}
         currPolyline={polyline}
+        data={location.state}
       />
 
       <CustomButton

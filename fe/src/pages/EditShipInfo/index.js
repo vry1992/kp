@@ -62,10 +62,6 @@ export function EditShipInfo() {
     setDataToSubmit(values);
   };
 
-  useEffect(() => {
-    console.log(dataToSubmit.types);
-  }, [dataToSubmit]);
-
   const onSubmit = () => {
     const { types, ...rest } = dataToSubmit;
     const typesKeys = Object.entries(types);
@@ -129,7 +125,7 @@ export function EditShipInfo() {
       setData(res);
     };
     getData();
-  }, [params]);
+  }, [location.state]);
 
   return (
     <div className="ship-info">

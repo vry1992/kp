@@ -147,6 +147,7 @@ export const ShipsLayer = ({ settings }) => {
     if (draggedItem.current) {
       const { latitude, longitude, dataId } = draggedItem.current;
       submitUpdatedPosition({
+        ...draggedItem.current,
         latitude,
         longitude,
         id: dataId
@@ -170,6 +171,7 @@ export const ShipsLayer = ({ settings }) => {
   );
 
   const onCreateNew = () => {
+    console.log('draggedItem.current', draggedItem.current);
     navigate(`/ship-info`, {
       state: draggedItem.current
     });
