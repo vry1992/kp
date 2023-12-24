@@ -43,8 +43,8 @@ export function SearchForm() {
     setValues
   } = useFormik({
     initialValues: {
-      dateTo: new Date(initialValues.dateTo) || defaultDateTo,
-      dateFrom: new Date(initialValues.dateFrom) || defaultDateFrom,
+      dateTo: new Date(initialValues.dateTo).toISOString(),
+      dateFrom: new Date(initialValues.dateFrom).toISOString(),
       shipNameList: initialValues.shipNameList || [],
       frequency: initialValues.frequency || '',
       shipCallsignList: initialValues.shipCallsignList || [],
@@ -59,14 +59,15 @@ export function SearchForm() {
     if (storage) {
       const storedFilters = JSON.parse(storage);
       setValues(storedFilters);
+      onSubmit(storedFilters);
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(SEARCH_KEY, JSON.stringify(values));
-    window.dispatchEvent(new Event('storage'));
-    onSubmit(values);
-  }, [values]);
+  // useEffect(() => {
+  //   localStorage.setItem(SEARCH_KEY, JSON.stringify(values));
+  //   window.dispatchEvent(new Event('storage'));
+  //   onSubmit(values);
+  // }, [values]);
 
   function onSubmit(values) {
     const { frequency, personNameList, shipNameList, shipCallsignList, dateFrom, dateTo } = values;
@@ -115,6 +116,9 @@ export function SearchForm() {
 
   function onChangeDate({ target: { name, value } }) {
     setFieldValue(name, value);
+    localStorage.setItem(SEARCH_KEY, JSON.stringify({ ...values, [name]: value }));
+    window.dispatchEvent(new Event('storage'));
+    onSubmit({ ...values, [name]: value });
   }
 
   function selectMultyple(name, selected) {

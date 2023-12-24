@@ -171,7 +171,6 @@ export const ShipsLayer = ({ settings }) => {
   );
 
   const onCreateNew = () => {
-    console.log('draggedItem.current', draggedItem.current);
     navigate(`/ship-info`, {
       state: draggedItem.current
     });
