@@ -26,10 +26,10 @@ export function ShipInfo() {
   }, []);
 
   useEffect(() => {
-    if (location.state?.lat && location.state?.lng) {
+    if (location.state) {
       setLatLng({
-        lat: location.state?.lat,
-        lng: location.state?.lng
+        lat: location.state?.lat || location.state?.latitude,
+        lng: location.state?.lng || location.state?.longitude
       });
     }
   }, [location]);
@@ -114,8 +114,6 @@ export function ShipInfo() {
 
     navigate('/map');
   };
-
-  console.log(location.state);
 
   return (
     <div>

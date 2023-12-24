@@ -37,15 +37,6 @@ export const ShipInfoForm = ({ onFormChange, shipsListData }) => {
     setFieldValue(name, value);
   }
 
-  useEffect(() => {
-    const dutyInfo = JSON.parse(localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({}));
-    const personName = dutyInfo.dutyManFullName || '';
-    setValues({
-      personName,
-      date: new Date().toISOString()
-    });
-  }, []);
-
   const renderForm = () => {
     return Object.entries(shipInfoFields).map(([name, fieldProps]) => (
       <FormField
@@ -88,6 +79,15 @@ export const ShipInfoForm = ({ onFormChange, shipsListData }) => {
       isReady
     );
   }, [types, values, isFormValid]);
+
+  useEffect(() => {
+    const dutyInfo = JSON.parse(localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({}));
+    const personName = dutyInfo.dutyManFullName || '';
+    setValues({
+      personName,
+      date: new Date().toISOString()
+    });
+  }, []);
 
   return (
     <div>
