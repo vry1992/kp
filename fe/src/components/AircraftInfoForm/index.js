@@ -28,6 +28,8 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
     validationSchema
   });
 
+  console.log(initData);
+
   useEffect(() => {
     const isReady = isFormValid && !!Object.keys(types).length;
     onFormChange(
@@ -58,7 +60,7 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
   }
 
   useEffect(() => {
-    if (Object.keys(initData).length) {
+    if (initData && Object.keys(initData).length) {
       const dutyInfo = JSON.parse(
         localStorage.getItem(DUTY_INFO_STORAGE_KEY) || JSON.stringify({})
       );
@@ -78,8 +80,9 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
   }, [initData]);
 
   useEffect(() => {
-    if (!Object.keys(initData).length) return;
+    if (initData && !Object.keys(initData).length) return;
     const { data } = initData;
+    if (!data) return;
     const grouped = Object.entries(data).reduce((acc, [key, planes]) => {
       const existed = acc[key] || [];
       return {

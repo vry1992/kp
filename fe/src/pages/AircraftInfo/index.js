@@ -20,8 +20,8 @@ export const AircraftInfo = () => {
   useEffect(() => {
     if (location.state) {
       setLatLng({
-        lat: location.state.latitude,
-        lng: location.state.longitude
+        lat: location.state.lat,
+        lng: location.state.lng
       });
 
       // setPolygone(location.state.polygone);

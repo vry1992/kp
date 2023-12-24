@@ -103,19 +103,24 @@ export const AddAircraftMap = ({
 
         {(data && Object.keys(data).length) || (currLatLng?.lat && currLatLng?.lng) ? (
           <>
-            <Marker
-              position={[currLatLng.lat || data.latitude, currLatLng.lng || data.longitude]}
-              icon={icon}>
-              <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
-                <strong>
-                  {Object.values(data.data)
-                    .flat()
-                    .map(({ label }) => label)
-                    .join(' / ')}
-                </strong>
-              </Tooltip>
-            </Marker>
-            {data.polyline ? (
+            {(currLatLng.lat || data.latitude) && (currLatLng.lng || data.longitude) ? (
+              <Marker
+                position={[currLatLng.lat || data.latitude, currLatLng.lng || data.longitude]}
+                icon={icon}>
+                <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+                  {data?.data && (
+                    <strong>
+                      {Object.values(data.data)
+                        .flat()
+                        .map(({ label }) => label)
+                        .join(' / ')}
+                    </strong>
+                  )}
+                </Tooltip>
+              </Marker>
+            ) : null}
+
+            {data?.polyline ? (
               <Polyline
                 pathOptions={{
                   color: 'red',
