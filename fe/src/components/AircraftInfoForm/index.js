@@ -81,8 +81,8 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
 
   useEffect(() => {
     if (initData && !Object.keys(initData).length) return;
+    if (!initData?.data) return;
     const { data } = initData;
-    if (!data) return;
     const grouped = Object.entries(data).reduce((acc, [key, planes]) => {
       const existed = acc[key] || [];
       return {
