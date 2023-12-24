@@ -60,7 +60,7 @@ export function ShipInfo() {
     setDataToSubmit(values);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const { types, ...rest } = dataToSubmit;
     const typesKeys = Object.entries(types);
     const isUnknownType =
@@ -70,7 +70,7 @@ export function ShipInfo() {
         return shipsSelected.some(({ label }) => label === 'н/в');
       });
     if (!isUnknownType) {
-      dispatch(
+      await dispatch(
         postShipsDataThunk({
           shipId: typesKeys[0][1][0].value,
           discoverTimestamp: rest.date,
@@ -85,7 +85,7 @@ export function ShipInfo() {
         })
       );
     } else {
-      dispatch(
+      await dispatch(
         postShipsDataThunk({
           discoverTimestamp: rest.date,
           personName: rest.personName,
