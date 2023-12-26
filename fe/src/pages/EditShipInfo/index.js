@@ -10,6 +10,7 @@ import { shipsListSelector } from '../../features/ships/store/shipsSelectors';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { EditShipInfoForm } from '../../components/EditShipInfoForm';
+import { Loader } from '../../components/Loader';
 
 export function EditShipInfo() {
   const params = useParams();
@@ -22,6 +23,7 @@ export function EditShipInfo() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [dataToSubmit, setDataToSubmit] = useState({});
   const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     dispatch(getShipsThunk());
@@ -117,36 +119,46 @@ export function EditShipInfo() {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await ShipsDataService.getShipDataById(params.id);
-      setLatLng({
-        lat: res.latitude,
-        lng: res.longitude
-      });
-      setData(res);
+      try {
+        setIsLoading(true);
+        const res = await ShipsDataService.getShipDataById(params.id);
+        setLatLng({
+          lat: res.latitude,
+          lng: res.longitude
+        });
+        setData(res);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     getData();
   }, [location.state]);
 
   return (
-    <div className="ship-info">
-      <Headline text={'Оновлення інформації про виявлений корабель'} />
-      <EditShipInfoForm
-        onFormChange={onFormChange}
-        shipsListData={shipSelectorData}
-        initData={data}
-      />
-      <AddShipMap
-        onCreate={onCreate}
-        onEdit={onEdit}
-        lat={latLngState?.lat}
-        lng={latLngState?.lng}
-      />
+    <>
+      {isLoading && <Loader />}
+      <div className="ship-info">
+        <Headline text={'Оновлення інформації про виявлений корабель'} />
+        <EditShipInfoForm
+          onFormChange={onFormChange}
+          shipsListData={shipSelectorData}
+          initData={data}
+        />
+        <AddShipMap
+          onCreate={onCreate}
+          onEdit={onEdit}
+          lat={latLngState?.lat}
+          lng={latLngState?.lng}
+        />
 
-      <CustomButton
-        text={'Зберегти'}
-        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
-        onClick={onSubmit}
-      />
-    </div>
+        <CustomButton
+          text={'Зберегти'}
+          disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+          onClick={onSubmit}
+        />
+      </div>
+    </>
   );
 }

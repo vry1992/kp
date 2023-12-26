@@ -7,6 +7,7 @@ import { Headline } from '../../components/Headline';
 import { CustomButton } from '../../components/CustomButton';
 import { AircraftService } from '../../features/aircraft/services/AircraftService';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Loader } from '../../components/Loader';
 
 export const AircraftInfo = () => {
   const [latLngState, setLatLng] = useState({});
@@ -16,6 +17,7 @@ export const AircraftInfo = () => {
   const [dataToSubmit, setDataToSubmit] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onCreate = (latlng) => {
     if (Array.isArray(latlng)) {
@@ -47,16 +49,22 @@ export const AircraftInfo = () => {
   };
 
   const onSubmit = async () => {
-    await AircraftService.postData({
-      ...dataToSubmit,
-      discoverTimestamp: dataToSubmit.date,
-      polygone,
-      polyline,
-      latitude: latLngState.lat,
-      longitude: latLngState.lng
-    });
-
-    navigate('/map');
+    try {
+      setIsLoading(true);
+      await AircraftService.postData({
+        ...dataToSubmit,
+        discoverTimestamp: dataToSubmit.date,
+        polygone,
+        polyline,
+        latitude: latLngState.lat,
+        longitude: latLngState.lng
+      });
+      navigate('/map');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -71,6 +79,7 @@ export const AircraftInfo = () => {
 
   return (
     <div>
+      {isLoading && <Loader />}
       <Headline text={'Введіть інформацію про виявлений літак'} />
       <AircraftInfoForm onFormChange={onFormChange} initData={location.state} />
       <AddAircraftMap

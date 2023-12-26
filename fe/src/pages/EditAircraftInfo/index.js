@@ -6,6 +6,7 @@ import { Headline } from '../../components/Headline';
 import { AddAircraftMap } from '../../components/AddAircraftMap';
 import { AircraftService } from '../../features/aircraft/services/AircraftService';
 import { EditAircraftInfoForm } from '../../components/EditAircraftInfoForm';
+import { Loader } from '../../components/Loader';
 
 export function EditAircraftInfo() {
   const params = useParams();
@@ -16,6 +17,7 @@ export function EditAircraftInfo() {
   const [polyline, setPolyline] = useState([]);
   const [dataToSubmit, setDataToSubmit] = useState({});
   const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const onCreate = (latlng) => {
     if (Array.isArray(latlng)) {
@@ -47,52 +49,69 @@ export function EditAircraftInfo() {
   };
 
   const onSubmit = async () => {
-    await AircraftService.patchData({
-      ...dataToSubmit,
-      polygone,
-      polyline,
-      latitude: latLngState.lat,
-      longitude: latLngState.lng,
-      id: params.id
-    });
-    navigate('/map');
+    try {
+      setIsLoading(true);
+      await AircraftService.patchData({
+        ...dataToSubmit,
+        polygone,
+        polyline,
+        latitude: latLngState.lat,
+        longitude: latLngState.lng,
+        id: params.id
+      });
+      navigate('/map');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     const getData = async () => {
-      const res = await AircraftService.getOne(params.id);
-      setLatLng({
-        lat: res.latitude,
-        lng: res.longitude
-      });
-      setPolyline(res.polyline || []);
-      setPolygone(res.polygone || []);
-      setData(res);
+      try {
+        setIsLoading(true);
+        const res = await AircraftService.getOne(params.id);
+        setLatLng({
+          lat: res.latitude,
+          lng: res.longitude
+        });
+        setPolyline(res.polyline || []);
+        setPolygone(res.polygone || []);
+        setData(res);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     getData();
   }, [params]);
 
   return (
-    <div className="ship-info">
-      <Headline text={'Оновлення інформації про виявлений літак'} />
-      <EditAircraftInfoForm onFormChange={onFormChange} shipsListData={[]} initData={data} />
+    <>
+      {isLoading && <Loader />}
+      <div className="ship-info">
+        <Headline text={'Оновлення інформації про виявлений літак'} />
+        <EditAircraftInfoForm onFormChange={onFormChange} shipsListData={[]} initData={data} />
 
-      {Object.keys(data).length && (
-        <AddAircraftMap
-          onCreate={onCreate}
-          onEdit={onEdit}
-          data={data}
-          currLatLng={latLngState}
-          currPolygone={polygone}
-          currPolyline={polyline}
+        {Object.keys(data).length && (
+          <AddAircraftMap
+            onCreate={onCreate}
+            onEdit={onEdit}
+            data={data}
+            currLatLng={latLngState}
+            currPolygone={polygone}
+            currPolyline={polyline}
+          />
+        )}
+
+        <CustomButton
+          text={'Зберегти'}
+          disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+          onClick={onSubmit}
         />
-      )}
-
-      <CustomButton
-        text={'Зберегти'}
-        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
-        onClick={onSubmit}
-      />
-    </div>
+      </div>
+    </>
   );
 }
