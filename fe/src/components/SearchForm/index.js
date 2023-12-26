@@ -8,6 +8,7 @@ import { useValidation } from '../../hooks/useValidation';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSelectOptionsFromArray, getShipsSelectOptionsFromArray } from '../../helpers';
 import { filterShipsDataThunk } from '../../features/shipsData/store/shipsDataThunk';
+import { filterAircraftThunk } from '../../features/aircraft/store/aircraftThunk';
 
 const defaultDateFrom = new Date(
   new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).setHours(0, 0, 0, 0)
@@ -81,6 +82,12 @@ export function SearchForm() {
     };
 
     dispatch(filterShipsDataThunk(dataToSubmit));
+    dispatch(
+      filterAircraftThunk({
+        dateTo: dataToSubmit.dateTo,
+        dateFrom: dataToSubmit.dateFrom
+      })
+    );
   }
 
   const getMultyselectOptions = useCallback(
