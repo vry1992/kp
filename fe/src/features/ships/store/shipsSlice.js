@@ -13,14 +13,22 @@ export const shipsSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(getShipsThunk.fulfilled, (state, action) => {
       state.ships = action.payload;
-      state.loading = state.loading.filter((type) => action.type !== type);
+      state.loading = {
+        ...state.loading,
+        [action.type.replace('/fulfilled', '')]: false
+      };
     });
-    // builder.addCase(getShipsThunk.pending, (state) => {
-    //   console.log(state.loading);
-    //   // state.loading = state.loading.push(action.type);
-    // });
+    builder.addCase(getShipsThunk.pending, (state, action) => {
+      state.loading = {
+        ...state.loading,
+        [action.type.replace('/pending', '')]: true
+      };
+    });
     builder.addCase(getShipsThunk.rejected, (state, action) => {
-      state.loading = state.loading.filter((type) => action.type !== type);
+      state.loading = {
+        ...state.loading,
+        [action.type.replace('/rejected', '')]: false
+      };
     });
   }
 });
