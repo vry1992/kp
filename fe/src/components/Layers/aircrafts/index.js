@@ -234,7 +234,9 @@ export const AircraftLayer = () => {
                   <p style={{ marginBottom: 0 }}>
                     {item.callsigns} - {item.companion_callsign}
                   </p>
-                  <p style={{ marginBottom: 0 }}>Виялений {parseDate(item.discover_timestamp_utc)}</p>
+                  <p style={{ marginBottom: 0 }}>
+                    Виялений {parseDate(item.discover_timestamp_utc)}
+                  </p>
                   <div className="d-flex justify-content-around">
                     <CustomButton
                       onClick={() => onEditClick(item)}
