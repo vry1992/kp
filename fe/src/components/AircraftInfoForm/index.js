@@ -61,7 +61,7 @@ export const AircraftInfoForm = ({ onFormChange, initData }) => {
         frequency: initData.frequency || '',
         additionalInformation: initData.additional_information || '',
         personName: initData.person_who_added || '',
-        personEditName: personName,
+        person_who_edited: personName,
         flyAmount: initData.flyAmount
       });
     }

@@ -222,7 +222,7 @@ export const AircraftLayer = () => {
                         .join(' / ')}
                     </strong>
                   </p>
-                  <p style={{ marginBottom: 0 }}>{item.callsigns}</p>
+                  <p style={{ marginBottom: 0 }}>{item.callsign}</p>
                 </Tooltip>
                 <Popup closeButton={false}>
                   <strong>
@@ -232,7 +232,7 @@ export const AircraftLayer = () => {
                       .join(' / ')}
                   </strong>
                   <p style={{ marginBottom: 0 }}>
-                    {item.callsigns} - {item.companion_callsign}
+                    {item.callsign} - {item.companion_callsign}
                   </p>
                   <p style={{ marginBottom: 0 }}>
                     Виялений {parseDate(item.discover_timestamp_utc)}

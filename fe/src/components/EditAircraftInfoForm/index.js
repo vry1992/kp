@@ -41,14 +41,12 @@ export const EditAircraftInfoForm = ({ onFormChange, initData }) => {
       );
       const personName = dutyInfo.dutyManFullName || '';
       setValues({
+        ...initData,
         date: initData.discover_timestamp_utc,
-        peleng: initData.peleng || '',
-        callsign: initData.callsign || '',
-        companionCallsign: initData.companion_callsign || '',
         frequency: initData.frequency || '',
-        additionalInformation: initData.additional_information || '',
+        peleng: initData.peleng || '',
         personName: initData.person_who_added || '',
-        personEditName: personName,
+        person_who_edited: personName,
         flyAmount: initData.flyAmount
       });
     }

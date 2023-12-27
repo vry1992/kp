@@ -157,6 +157,7 @@ export function FormField(fieldProps) {
           onBlur={onBlur}
           className={error && touched && 'invalid-field'}
           style={{ height: '100px' }}
+          value={restProps.value}
         />
         {error && touched && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
       </FloatingLabel>

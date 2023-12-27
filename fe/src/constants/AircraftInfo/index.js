@@ -99,11 +99,11 @@ export const editAircraftInfoFields = {
     required: false,
     columnWidth: 5
   },
-  companionCallsign: {
+  companion_callsign: {
     type: 'text',
     placeholder: "Позивний того з ким виходив на зв'язок",
     label: "Позивний того з ким виходив на зв'язок",
-    fieldName: 'companionCallsign',
+    fieldName: 'companion_callsign',
     required: false,
     columnWidth: 5
   },
@@ -123,18 +123,18 @@ export const editAircraftInfoFields = {
     required: true,
     disabled: true
   },
-  personEditName: {
+  person_who_edited: {
     type: 'text',
     placeholder: 'Прізвище та ініціали того хто редагує запис, наприклад Петров П.П.',
     label: 'Прізвище та ініціали того хто редагує запис, наприклад Петров П.П.',
-    fieldName: 'personEditName',
+    fieldName: 'person_who_edited',
     required: true
   },
-  additionalInformation: {
+  additional_information: {
     type: 'textarea',
     placeholder: 'Будь-яка додаткова інформація',
     label: 'Будь-яка додаткова інформація',
-    fieldName: 'additionalInformation',
+    fieldName: 'additional_information',
     required: false
   }
 };
