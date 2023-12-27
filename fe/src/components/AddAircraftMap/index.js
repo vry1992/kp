@@ -66,9 +66,9 @@ export const AddAircraftMap = ({
           onCreated={(e) => {
             onCreate(e.layer._latlng || e.layer._latlngs);
           }}
-          edit={{
-            remove: false
-          }}
+          // edit={{
+          //   remove: false
+          // }}
           draw={{
             rectangle: false,
             circle: false,
