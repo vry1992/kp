@@ -214,12 +214,15 @@ export const AircraftLayer = () => {
                   />
                 ) : null}
                 <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
-                  <strong>
-                    {Object.values(item.data)
-                      .flat()
-                      .map(({ label }) => label)
-                      .join(' / ')}
-                  </strong>
+                  <p>
+                    <strong>
+                      {Object.values(item.data)
+                        .flat()
+                        .map(({ label }) => label)
+                        .join(' / ')}
+                    </strong>
+                  </p>
+                  <p>{item.callsigns}</p>
                 </Tooltip>
                 <Popup closeButton={false}>
                   <strong>
@@ -228,6 +231,9 @@ export const AircraftLayer = () => {
                       .map(({ label }) => label)
                       .join(' / ')}
                   </strong>
+                  <p>
+                    {item.callsigns} - {item.companion_callsign}
+                  </p>
                   <p>Виялений {parseDate(item.discover_timestamp_utc)}</p>
                   <div className="d-flex justify-content-around">
                     <CustomButton
