@@ -235,6 +235,7 @@ export const ShipsLayer = ({ settings }) => {
               </Tooltip>
               <Popup closeButton={false}>
                 <strong>{item.shipName}</strong>
+                <strong>Проєкт: {item.shipProject}</strong>
                 <p>Виялений {parseDate(item.discoverTimestamp)}</p>
                 <div className="d-flex justify-content-around">
                   <CustomButton
