@@ -11,7 +11,6 @@ import { UpdateOrCreateNewPopup } from '../../UpdateOrCreatePopup';
 import { ClickOnMapPopup } from '../../ClickOnMapPopup';
 import { DUTY_INFO_STORAGE_KEY } from '../../../pages/DutyInfo';
 import { Loader } from '../../Loader';
-import { ShipsDataService } from '../../../features/shipsData/services/ShipsDataService';
 import { filterAircraftThunk } from '../../../features/aircraft/store/aircraftThunk';
 import { aircraftsListSelector } from '../../../features/aircraft/store/aircraftSelectors';
 import { AircraftService } from '../../../features/aircraft/services/AircraftService';
@@ -27,7 +26,6 @@ export const AircraftLayer = () => {
   const draggedItem = useRef(null);
   const [updateOrCreatePopup, setUpdateOrCreatePopup] = useState(false);
   const [clickOnMapPopup, setClickOnMapPopup] = useState(false);
-  const [routes, setRoutes] = useState({});
   const [clickCoordinates, setClickCoordinates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -88,7 +86,7 @@ export const AircraftLayer = () => {
         <path d="M0 0 L50 100 L100 0 Z" fill="red"></path>
       </svg>`,
       iconSize: [35, 35],
-      className: 'leaflet-div-icon'
+      className: 'leaflet-div-icon-custom'
     });
 
   const onCancelUpdateOrCreatePopup = () => {
@@ -137,18 +135,10 @@ export const AircraftLayer = () => {
   );
 
   const onCreateNew = () => {
-    console.log('draggedItem.current', draggedItem.current);
     navigate(`/aircraft`, {
       state: draggedItem.current
     });
   };
-
-  const onShowRouteClick = useCallback(
-    (marker) => {
-      console.log(marker);
-    },
-    [routes]
-  );
 
   const onConfirmAddNewShipOnClick = () => {
     navigate(`/ship-info`, {
@@ -213,7 +203,11 @@ export const AircraftLayer = () => {
                     })}
                   />
                 ) : null}
-                <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+                <Tooltip
+                  permanent={true}
+                  direction="right"
+                  offset={{ x: 5, y: 0 }}
+                  className="name-tooltip">
                   <p style={{ marginBottom: 0 }}>
                     <strong>
                       {Object.values(item.data)
@@ -249,14 +243,6 @@ export const AircraftLayer = () => {
                       iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`}
                       size="sm"
                     />
-
-                    {item.shipProject ? (
-                      <CustomButton
-                        onClick={() => onShowRouteClick(item)}
-                        iconPath={`${process.env.PUBLIC_URL}/images/icons/route.png`}
-                        size="sm"
-                      />
-                    ) : null}
                   </div>
                 </Popup>
               </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import { AddAircraftMap } from '../../components/AddAircraftMap';
@@ -18,13 +18,15 @@ export const AircraftInfo = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const createdPolygone = useRef(null);
+  const createdPolyline = useRef(null);
 
   const onCreate = (latlng) => {
     if (Array.isArray(latlng)) {
       if (Array.isArray(latlng[0])) {
-        setPolygone(latlng);
+        createdPolygone.current = latlng;
       } else {
-        setPolyline(latlng);
+        createdPolyline.current = latlng;
       }
     } else {
       setLatLng(latlng);
@@ -54,8 +56,8 @@ export const AircraftInfo = () => {
       await AircraftService.postData({
         ...dataToSubmit,
         discoverTimestamp: dataToSubmit.date,
-        polygone,
-        polyline,
+        polygone: createdPolygone.current || polygone,
+        polyline: createdPolyline.current || polyline,
         latitude: latLngState.lat,
         longitude: latLngState.lng
       });
@@ -68,7 +70,6 @@ export const AircraftInfo = () => {
   };
 
   useEffect(() => {
-    console.log(location.state);
     if (location.state) {
       setLatLng({
         lat: location.state.lat || location.state.latitude,

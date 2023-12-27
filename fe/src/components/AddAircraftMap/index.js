@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -27,7 +27,7 @@ const icon = new L.DivIcon({
     <path d="M0 0 L50 100 L100 0 Z" fill="red"></path>
   </svg>`,
   iconSize: [35, 35],
-  className: 'leaflet-div-icon'
+  className: 'leaflet-div-icon-custom'
 });
 
 export const AddAircraftMap = ({
@@ -38,6 +38,39 @@ export const AddAircraftMap = ({
   currPolygone,
   currPolyline
 }) => {
+  const handleCreated = (e) => {
+    onCreate(e.layer._latlng || e.layer._latlngs);
+  };
+
+  const handleEdited = (e) => {
+    if (e.layers.getLayers()[0]?._latlng) {
+      onEdit(e.layers.getLayers()[0]?._latlng);
+      return;
+    }
+    if (e.layers) {
+      if (Array.isArray(e.layers.getLayers()[0]._latlngs[0])) {
+        const res = e.layers
+          .getLayers()[0]
+          ._latlngs.flat()
+          .map(({ lat, lng }) => ({ lat, lng }));
+        onEdit([res]);
+      } else {
+        const res = e.layers.getLayers()[0]._latlngs.map(({ lat, lng }) => ({ lat, lng }));
+        onEdit(res);
+      }
+    }
+  };
+
+  const polylinePositions = useMemo(() => {
+    return currPolyline.map(({ lat, lng }) => [lat, lng]);
+  }, [currPolyline]);
+
+  const polygonePositions = useMemo(() => {
+    return (currPolygone[0] || []).map(({ lat, lng }) => {
+      return [lat, lng];
+    });
+  }, [currPolygone]);
+
   return (
     <MapContainer
       center={[
@@ -59,25 +92,17 @@ export const AddAircraftMap = ({
       />
       <FeatureGroup>
         <EditControl
+          onCreated={handleCreated}
+          onEdited={handleEdited}
           position="topright"
-          onEditMove={(e) => {
-            onEdit(e.layer._latlng || e.layer._latlngs);
-          }}
-          onCreated={(e) => {
-            onCreate(e.layer._latlng || e.layer._latlngs);
-          }}
-          // edit={{
-          //   remove: false
-          // }}
           draw={{
             rectangle: false,
             circle: false,
             circlemarker: false,
             marker: { icon },
             polyline:
-              currPolyline?.length || currPolygone?.length
-                ? false
-                : {
+              currPolyline?.length || !currPolygone?.length
+                ? {
                     shapeOptions: {
                       color: 'red',
                       stroke: true,
@@ -86,11 +111,11 @@ export const AddAircraftMap = ({
                       dashOffset: 10,
                       opacity: 1
                     }
-                  },
+                  }
+                : false,
             polygon:
-              currPolygone?.length || currPolyline?.length
-                ? false
-                : {
+              currPolygone?.length || !currPolyline?.length
+                ? {
                     showArea: false,
                     shapeOptions: {
                       color: 'red',
@@ -101,65 +126,43 @@ export const AddAircraftMap = ({
                       opacity: 1
                     }
                   }
+                : false
           }}
         />
 
-        {(data && Object.keys(data).length) || (currLatLng?.lat && currLatLng?.lng) ? (
-          <>
-            {(currLatLng.lat || data.latitude) && (currLatLng.lng || data.longitude) ? (
-              <Marker
-                position={[currLatLng.lat || data.latitude, currLatLng.lng || data.longitude]}
-                icon={icon}>
-                <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
-                  {data?.data && (
-                    <strong>
-                      {Object.values(data.data)
-                        .flat()
-                        .map(({ label }) => label)
-                        .join(' / ')}
-                    </strong>
-                  )}
-                </Tooltip>
-              </Marker>
-            ) : null}
+        <Polyline
+          pathOptions={{
+            color: 'red',
+            dashArray: [5, 10],
+            fill: false
+          }}
+          positions={polylinePositions}
+        />
 
-            {data?.polyline ? (
-              <Polyline
-                pathOptions={{
-                  color: 'red',
-                  dashArray: [5, 10],
-                  fill: false
-                }}
-                positions={data.polyline.map(({ lat, lng }) => {
-                  return [lat, lng];
-                })}
-              />
-            ) : null}
-            {!currPolygone?.[0]?.length && data?.polygone?.[0] ? (
-              <Polygon
-                pathOptions={{
-                  color: 'red',
-                  dashArray: [5, 10],
-                  fill: false
-                }}
-                positions={data?.polygone[0].map(({ lat, lng }) => {
-                  return [lat, lng];
-                })}
-              />
-            ) : null}
-            {currPolygone?.[0]?.length ? (
-              <Polygon
-                pathOptions={{
-                  color: 'red',
-                  dashArray: [5, 10],
-                  fill: true
-                }}
-                positions={currPolygone[0].map(({ lat, lng }) => {
-                  return [lat, lng];
-                })}
-              />
-            ) : null}
-          </>
+        <Polygon
+          pathOptions={{
+            color: 'red',
+            dashArray: [5, 10],
+            fill: false
+          }}
+          positions={polygonePositions}
+        />
+
+        {(currLatLng?.lat || data?.latitude) && (currLatLng?.lng || data?.longitude) ? (
+          <Marker
+            position={[currLatLng?.lat || data?.latitude, currLatLng?.lng || data?.longitude]}
+            icon={icon}>
+            <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+              {data?.data && (
+                <strong>
+                  {Object.values(data.data)
+                    .flat()
+                    .map(({ label }) => label)
+                    .join(' / ')}
+                </strong>
+              )}
+            </Tooltip>
+          </Marker>
         ) : null}
       </FeatureGroup>
     </MapContainer>

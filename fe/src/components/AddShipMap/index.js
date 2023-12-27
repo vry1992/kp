@@ -8,7 +8,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 const icon = new L.DivIcon({
   html: `<img src="${process.env.PUBLIC_URL}/images/signs/emptyShip.svg">`,
   iconSize: [35, 35],
-  className: 'leaflet-div-icon'
+  className: 'leaflet-div-icon-custom'
 });
 
 export const AddShipMap = ({ onCreate, onEdit, lat, lng }) => {

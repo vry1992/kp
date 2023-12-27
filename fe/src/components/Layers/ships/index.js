@@ -101,7 +101,7 @@ export const ShipsLayer = ({ settings }) => {
       }</p><img src="${process.env.PUBLIC_URL}/images/signs/emptyShip.svg"></div>`,
       // html: ShipIcon(),
       iconSize: [35, 35],
-      className: 'leaflet-div-icon'
+      className: 'leaflet-div-icon-custom'
     });
 
   const getShipsRoutes = useCallback(
@@ -113,7 +113,7 @@ export const ShipsLayer = ({ settings }) => {
           lat: curr.latitude,
           lng: curr.longitude,
           color: alreadyExistWithThiId.length
-            ? curr.shipId[0].color
+            ? curr.shipId[0]?.color
             : `#${Math.floor(Math.random() * 16777215).toString(16)}`
         };
         return {
@@ -230,7 +230,11 @@ export const ShipsLayer = ({ settings }) => {
             eventHandlers={markerEventHandlers(item)}
             draggable={true}>
             <>
-              <Tooltip permanent={true} direction="right" offset={{ x: 5, y: 0 }}>
+              <Tooltip
+                permanent={true}
+                direction="right"
+                offset={{ x: 5, y: 0 }}
+                className="name-tooltip">
                 <strong>{item.shipName}</strong>
               </Tooltip>
               <Popup closeButton={false}>
