@@ -72,6 +72,13 @@ export function Map() {
     };
   }, []);
 
+  useEffect(() => {
+    const filters = localStorage.getItem(SEARCH_KEY);
+    if (filters) {
+      setInitFilters(JSON.parse(filters));
+    }
+  }, []);
+
   return (
     <div className="map">
       <div className="map_title">
