@@ -83,6 +83,12 @@ export const AircraftInfo = () => {
       {isLoading && <Loader />}
       <Headline text={'Введіть інформацію про виявлений літак'} />
       <AircraftInfoForm onFormChange={onFormChange} initData={location.state} />
+      <CustomButton
+        text={'Зберегти'}
+        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+        onClick={onSubmit}
+      />
+      <br />
       <AddAircraftMap
         onCreate={onCreate}
         onEdit={onEdit}
@@ -90,12 +96,6 @@ export const AircraftInfo = () => {
         currPolygone={polygone}
         currPolyline={polyline}
         data={location.state}
-      />
-
-      <CustomButton
-        text={'Зберегти'}
-        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
-        onClick={onSubmit}
       />
     </div>
   );

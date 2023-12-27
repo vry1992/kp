@@ -123,17 +123,17 @@ export function ShipInfo() {
         shipsListData={shipSelectorData}
         initData={location.state}
       />
+      <CustomButton
+        text={'Зберегти'}
+        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+        onClick={onSubmit}
+      />
+      <br />
       <AddShipMap
         onCreate={onCreate}
         onEdit={onEdit}
         lat={latLngState?.lat}
         lng={latLngState?.lng}
-      />
-
-      <CustomButton
-        text={'Зберегти'}
-        disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
-        onClick={onSubmit}
       />
     </div>
   );

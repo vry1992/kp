@@ -94,7 +94,12 @@ export function EditAircraftInfo() {
       <div className="ship-info">
         <Headline text={'Оновлення інформації про виявлений літак'} />
         <EditAircraftInfoForm onFormChange={onFormChange} shipsListData={[]} initData={data} />
-
+        <CustomButton
+          text={'Зберегти'}
+          disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
+          onClick={onSubmit}
+        />
+        <br />
         {Object.keys(data).length && (
           <AddAircraftMap
             onCreate={onCreate}
@@ -105,12 +110,6 @@ export function EditAircraftInfo() {
             currPolyline={polyline}
           />
         )}
-
-        <CustomButton
-          text={'Зберегти'}
-          disabled={!isFormValid || !latLngState.lat || !latLngState.lng}
-          onClick={onSubmit}
-        />
       </div>
     </>
   );
